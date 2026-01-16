@@ -9,17 +9,9 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-function AppContent() {
+function CartSyncProvider({ children }: { children: React.ReactNode }) {
   useCartSync();
-  
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Index />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
-  );
+  return <>{children}</>;
 }
 
 const App = () => (
@@ -27,7 +19,14 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner position="top-center" />
-      <AppContent />
+      <BrowserRouter>
+        <CartSyncProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </CartSyncProvider>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );
