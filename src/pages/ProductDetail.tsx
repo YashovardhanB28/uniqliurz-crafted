@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useProduct } from "@/hooks/useProducts";
@@ -8,7 +8,9 @@ import { useCartStore } from "@/stores/cartStore";
 import { formatPrice } from "@/lib/shopify";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Minus, Plus, ArrowLeft, Check, ShoppingBag } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Loader2, Minus, Plus, ArrowLeft, Check, ShoppingBag, Sparkles, Palette, Type } from "lucide-react";
 import { toast } from "sonner";
 
 const ProductDetail = () => {
@@ -20,6 +22,12 @@ const ProductDetail = () => {
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  
+  // Customization state
+  const [customText, setCustomText] = useState("");
+  const [customColor, setCustomColor] = useState("#FF6B35");
+  const [customNotes, setCustomNotes] = useState("");
+  const [showCustomization, setShowCustomization] = useState(false);
 
   // Initialize selected options when product loads
   if (product && Object.keys(selectedOptions).length === 0 && product.options) {
@@ -61,16 +69,25 @@ const ProductDetail = () => {
     if (!product || !currentVariant) return;
     
     try {
+      // Include customization in selected options
+      const customOptions = [
+        ...currentVariant.selectedOptions,
+        ...(customText ? [{ name: "Custom Text", value: customText }] : []),
+        ...(customColor !== "#FF6B35" ? [{ name: "Custom Color", value: customColor }] : []),
+        ...(customNotes ? [{ name: "Special Notes", value: customNotes }] : []),
+      ];
+
       await addItem({
         product: { node: product },
         variantId: currentVariant.id,
         variantTitle: currentVariant.title,
         price: currentVariant.price,
         quantity,
-        selectedOptions: currentVariant.selectedOptions,
+        selectedOptions: customOptions,
       });
+      
       toast.success("Added to cart!", {
-        description: `${product.title} x${quantity}`,
+        description: `${product.title}${customText ? ` - "${customText}"` : ""} x${quantity}`,
       });
     } catch (error) {
       toast.error("Failed to add to cart");
@@ -133,7 +150,7 @@ const ProductDetail = () => {
                 key={selectedImage}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="aspect-square bg-secondary/30 rounded-2xl overflow-hidden"
+                className="aspect-square bg-secondary/30 rounded-2xl overflow-hidden relative"
               >
                 {images[selectedImage]?.node ? (
                   <img
@@ -146,6 +163,12 @@ const ProductDetail = () => {
                     No image
                   </div>
                 )}
+                
+                {/* Customizable badge */}
+                <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Customizable
+                </Badge>
               </motion.div>
               
               {/* Thumbnails */}
@@ -197,7 +220,7 @@ const ProductDetail = () => {
                 </Badge>
               )}
 
-              {/* Options */}
+              {/* Product Options from Shopify */}
               {product.options && product.options.length > 0 && product.options[0].values.length > 1 && (
                 <div className="space-y-4">
                   {product.options.map((option) => (
@@ -223,6 +246,103 @@ const ProductDetail = () => {
                     </div>
                   ))}
                 </div>
+              )}
+
+              {/* Customization Toggle */}
+              <div className="pt-4 border-t border-border">
+                <button
+                  onClick={() => setShowCustomization(!showCustomization)}
+                  className="flex items-center gap-2 text-primary font-medium hover:underline"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  {showCustomization ? "Hide" : "Add"} Personalization Options
+                </button>
+              </div>
+
+              {/* Customization Options */}
+              {showCustomization && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="space-y-4 p-4 bg-secondary/30 rounded-xl border border-border"
+                >
+                  <h3 className="font-semibold text-foreground flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    Personalize Your Gift
+                  </h3>
+                  
+                  {/* Custom Text */}
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+                      <Type className="w-4 h-4" />
+                      Custom Text / Name
+                    </label>
+                    <Input
+                      placeholder="Enter text to be engraved or printed"
+                      value={customText}
+                      onChange={(e) => setCustomText(e.target.value)}
+                      maxLength={50}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {customText.length}/50 characters
+                    </p>
+                  </div>
+
+                  {/* Color Picker */}
+                  <div>
+                    <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
+                      <Palette className="w-4 h-4" />
+                      Preferred Color
+                    </label>
+                    <div className="flex items-center gap-3">
+                      <input
+                        type="color"
+                        value={customColor}
+                        onChange={(e) => setCustomColor(e.target.value)}
+                        className="w-12 h-12 rounded-lg cursor-pointer border border-border"
+                      />
+                      <div className="flex flex-wrap gap-2">
+                        {["#FF6B35", "#3B82F6", "#10B981", "#8B5CF6", "#EC4899", "#F59E0B"].map((color) => (
+                          <button
+                            key={color}
+                            onClick={() => setCustomColor(color)}
+                            className={`w-8 h-8 rounded-full border-2 transition-all ${
+                              customColor === color ? "border-foreground scale-110" : "border-transparent"
+                            }`}
+                            style={{ backgroundColor: color }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Special Notes */}
+                  <div>
+                    <label className="text-sm font-medium text-foreground mb-2 block">
+                      Special Instructions (Optional)
+                    </label>
+                    <Textarea
+                      placeholder="Any specific requests, font preferences, or design notes..."
+                      value={customNotes}
+                      onChange={(e) => setCustomNotes(e.target.value)}
+                      rows={3}
+                    />
+                  </div>
+
+                  {/* Preview */}
+                  {customText && (
+                    <div className="p-4 rounded-lg bg-background border border-primary/30">
+                      <p className="text-xs text-muted-foreground mb-2">Preview:</p>
+                      <p 
+                        className="text-xl font-bold"
+                        style={{ color: customColor }}
+                      >
+                        "{customText}"
+                      </p>
+                    </div>
+                  )}
+                </motion.div>
               )}
 
               {/* Quantity */}
@@ -276,6 +396,24 @@ const ProductDetail = () => {
                   </p>
                 </div>
               )}
+
+              {/* Features */}
+              <div className="pt-6 border-t border-border">
+                <h3 className="font-medium text-foreground mb-4">Why Choose Us</h3>
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    { icon: "✨", text: "Handcrafted Quality" },
+                    { icon: "🎨", text: "Fully Customizable" },
+                    { icon: "📦", text: "Secure Packaging" },
+                    { icon: "💝", text: "Gift Ready" },
+                  ].map((feature) => (
+                    <div key={feature.text} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span>{feature.icon}</span>
+                      {feature.text}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>
