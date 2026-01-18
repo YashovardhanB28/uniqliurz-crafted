@@ -1,21 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { 
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useProducts } from "@/hooks/useProducts";
 import { Loader2, Palette, Type, Package, Send } from "lucide-react";
 import { toast } from "sonner";
 
 const Customize = () => {
+  const { data: products, isLoading: isProductsLoading } = useProducts(50);
+  const [selectedProductHandle, setSelectedProductHandle] = useState<string>("");
+
+  const selectedProduct = products?.find((p) => p.node.handle === selectedProductHandle);
+
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     productType: "",
@@ -27,6 +33,17 @@ const Customize = () => {
     email: "",
     notes: ""
   });
+
+  useEffect(() => {
+    if (!products || products.length === 0) return;
+    if (selectedProductHandle) return;
+
+    const first = products[0];
+    if (!first?.node?.handle) return;
+
+    setSelectedProductHandle(first.node.handle);
+    setFormData((prev) => ({ ...prev, productType: first.node.title }));
+  }, [products, selectedProductHandle]);
 
   const productTypes = [
     "Resin Art Frame",
@@ -65,6 +82,7 @@ const Customize = () => {
       email: "",
       notes: ""
     });
+    setSelectedProductHandle("");
     setIsSubmitting(false);
   };
 
@@ -115,17 +133,34 @@ const Customize = () => {
                       <label className="block text-sm font-medium text-foreground mb-2">
                         Product Type *
                       </label>
-                      <Select 
-                        value={formData.productType} 
-                        onValueChange={(value) => setFormData({ ...formData, productType: value })}
+                      <Select
+                        value={products && products.length > 0 ? selectedProductHandle : formData.productType}
+                        onValueChange={(value) => {
+                          if (products && products.length > 0) {
+                            setSelectedProductHandle(value);
+                            const p = products.find((prod) => prod.node.handle === value);
+                            setFormData({ ...formData, productType: p?.node.title ?? "" });
+                            return;
+                          }
+                          setFormData({ ...formData, productType: value });
+                        }}
+                        disabled={isProductsLoading}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Select a product" />
+                          <SelectValue placeholder={isProductsLoading ? "Loading products..." : "Select a product"} />
                         </SelectTrigger>
                         <SelectContent>
-                          {productTypes.map((type) => (
-                            <SelectItem key={type} value={type}>{type}</SelectItem>
-                          ))}
+                          {products && products.length > 0
+                            ? products.map((p) => (
+                                <SelectItem key={p.node.id} value={p.node.handle}>
+                                  {p.node.title}
+                                </SelectItem>
+                              ))
+                            : productTypes.map((type) => (
+                                <SelectItem key={type} value={type}>
+                                  {type}
+                                </SelectItem>
+                              ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -276,16 +311,34 @@ const Customize = () => {
                 </h3>
                 
                 {/* Preview Box */}
-                <div 
-                  className="aspect-square rounded-2xl mb-6 flex items-center justify-center relative overflow-hidden"
-                  style={{ backgroundColor: `${formData.color}20` }}
-                >
-                  <div 
-                    className="absolute inset-4 rounded-xl border-2 flex items-center justify-center"
+                <div className="aspect-square rounded-2xl mb-6 relative overflow-hidden bg-muted border border-border">
+                  {selectedProduct?.node.images.edges[0]?.node ? (
+                    <img
+                      src={selectedProduct.node.images.edges[0].node.url}
+                      alt={selectedProduct.node.images.edges[0].node.altText || selectedProduct.node.title}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground text-center px-6">
+                      {isProductsLoading ? "Loading products..." : "Select a product to see the preview"}
+                    </div>
+                  )}
+
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: `linear-gradient(180deg, transparent 35%, ${formData.color}26 100%)`,
+                    }}
+                    aria-hidden="true"
+                  />
+
+                  <div
+                    className="absolute inset-4 rounded-xl border-2 flex items-center justify-center bg-background/30 backdrop-blur-sm"
                     style={{ borderColor: formData.color }}
                   >
                     {formData.customText ? (
-                      <span 
+                      <span
                         className="text-2xl font-bold text-center px-4"
                         style={{ color: formData.color }}
                       >
