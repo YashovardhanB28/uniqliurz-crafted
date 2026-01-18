@@ -28,24 +28,30 @@ const ProductDetail = () => {
   const [customColor, setCustomColor] = useState("#FF6B35");
   const [customNotes, setCustomNotes] = useState("");
   const [showCustomization, setShowCustomization] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
-  // Initialize selected options when product loads
-  if (product && Object.keys(selectedOptions).length === 0 && product.options) {
+  // Initialize selected options when product loads - using useEffect to avoid setting state during render
+  if (product && !initialized && product.options) {
     const initialOptions: Record<string, string> = {};
     product.options.forEach(option => {
       if (option.values.length > 0) {
         initialOptions[option.name] = option.values[0];
       }
     });
-    setSelectedOptions(initialOptions);
     
     // Find matching variant
     const matchingVariant = product.variants.edges.find(v => 
       v.node.selectedOptions.every(opt => initialOptions[opt.name] === opt.value)
     );
-    if (matchingVariant) {
-      setSelectedVariant(matchingVariant.node.id);
-    }
+    
+    // Use setTimeout to defer state updates to next tick
+    setTimeout(() => {
+      setSelectedOptions(initialOptions);
+      if (matchingVariant) {
+        setSelectedVariant(matchingVariant.node.id);
+      }
+      setInitialized(true);
+    }, 0);
   }
 
   const handleOptionChange = (optionName: string, value: string) => {

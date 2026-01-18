@@ -51,13 +51,15 @@ const Index = () => {
                   Explore Collection
                 </motion.button>
               </Link>
-              <motion.button
-                className="btn-hero-outline text-hero-text border-hero-text/30 hover:border-primary"
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Custom Order
-              </motion.button>
+              <Link to="/customize">
+                <motion.button
+                  className="btn-hero-outline text-hero-text border-hero-text/30 hover:border-primary"
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  Custom Order
+                </motion.button>
+              </Link>
             </div>
           </motion.div>
         </div>
