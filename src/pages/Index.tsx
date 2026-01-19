@@ -1,10 +1,44 @@
 import { motion } from 'framer-motion';
-import { ChevronDown, Sparkles, Package, Truck, Heart } from 'lucide-react';
+import { ChevronDown, Sparkles, Package, Truck, Heart, HelpCircle, MessageCircle, Clock, Palette } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ProductCard } from '@/components/ProductCard';
+import { ProductBanner } from '@/components/ProductBanner';
 import { useProducts } from '@/hooks/useProducts';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+const faqs = [
+  {
+    question: "How long does it take to make a custom order?",
+    answer: "Most custom orders are crafted within 5-7 business days, depending on complexity. Rush orders are available upon request for an additional fee."
+  },
+  {
+    question: "Can I see a preview before my order is made?",
+    answer: "Absolutely! For all custom orders, we send you a digital mockup for approval before we start crafting. You can request revisions until you're completely satisfied."
+  },
+  {
+    question: "What materials do you use?",
+    answer: "We use premium quality materials including high-grade resin, natural wood, eco-friendly paints, and durable finishes to ensure your gift lasts a lifetime."
+  },
+  {
+    question: "Do you offer gift wrapping?",
+    answer: "Yes! Every order comes beautifully packaged in our signature gift box with a personalized card at no extra charge."
+  },
+  {
+    question: "What is your return policy?",
+    answer: "We stand behind our craftsmanship. If you're not satisfied with your order, reach out within 14 days and we'll make it right — guaranteed."
+  },
+  {
+    question: "Where do you deliver?",
+    answer: "We currently deliver across the USA only. But great news — we're expanding worldwide soon! Follow us on social media for updates."
+  }
+];
 
 const Index = () => {
   const { data: products, isLoading } = useProducts(8);
@@ -15,9 +49,10 @@ const Index = () => {
       
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center section-dark overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsla(16,76%,49%,0.1),transparent_50%)]" />
+        <ProductBanner />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,hsla(16,76%,49%,0.1),transparent_50%)] z-20" />
         
-        <div className="container mx-auto px-4 pt-20 relative z-10 text-center">
+        <div className="container mx-auto px-4 pt-20 relative z-30 text-center">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -65,7 +100,7 @@ const Index = () => {
         </div>
         
         <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-primary"
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 text-primary z-30"
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 1.5 }}
         >
@@ -166,6 +201,47 @@ const Index = () => {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section className="py-24 bg-muted/30">
+        <div className="container mx-auto px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <h2 className="heading-section text-foreground mb-4">Frequently Asked Questions</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Got questions? We've got answers. If you don't find what you're looking for, feel free to contact us!
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-3xl mx-auto"
+          >
+            <Accordion type="single" collapsible className="space-y-4">
+              {faqs.map((faq, index) => (
+                <AccordionItem 
+                  key={index} 
+                  value={`item-${index}`}
+                  className="bg-background rounded-lg border border-border px-6"
+                >
+                  <AccordionTrigger className="text-left hover:no-underline">
+                    <span className="font-medium text-foreground">{faq.question}</span>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground">
+                    {faq.answer}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </motion.div>
         </div>
       </section>
 

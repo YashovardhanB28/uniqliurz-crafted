@@ -48,7 +48,7 @@ export function Header() {
               <Gift className="w-6 h-6 text-primary-foreground" />
             </motion.div>
             <span className="text-xl md:text-2xl font-display font-bold text-primary-foreground tracking-tight">
-              UNIQLIURZ
+              UNI<span className="text-primary">Q</span>LIURZ
             </span>
           </Link>
 
