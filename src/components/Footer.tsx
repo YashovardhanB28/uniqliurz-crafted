@@ -1,5 +1,16 @@
 import { Link } from 'react-router-dom';
-import { Gift, Instagram, Facebook, Twitter, Mail } from 'lucide-react';
+import { Gift, Instagram, Facebook, Mail, Phone } from 'lucide-react';
+
+const PHONE_NUMBER = '+1 551 229 7949';
+const INSTAGRAM_URL = 'https://www.instagram.com/uniq_li_urz?igsh=dDF2dG9teHNudHFw';
+const FACEBOOK_URL = 'https://www.facebook.com/share/175gMpFb8u/?mibextid=wwXIfr';
+
+const quickLinks = [
+  { name: 'Shop', href: '/shop' },
+  { name: 'About Us', href: '/about' },
+  { name: 'Contact', href: '/contact' },
+  { name: 'Custom Order', href: '/customize' },
+];
 
 export function Footer() {
   return (
@@ -11,26 +22,48 @@ export function Footer() {
               <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
                 <Gift className="w-6 h-6 text-primary-foreground" />
               </div>
-              <span className="text-2xl font-display font-bold">UNIQLIURZ</span>
+              <span className="text-2xl font-display font-bold">
+                UNI<span className="text-primary">Q</span>LIURZ
+              </span>
             </Link>
             <p className="text-secondary-foreground/70 max-w-md mb-6">
-              Where Every Creation Tells a Story. Handcrafted luxury gifts, personalized perfectly for your special moments.
+              Where Every Creation Tells a Story. Handcrafted luxury gifts, personalized perfectly for your special moments. Making smiles in USA only — coming worldwide soon!
             </p>
             <div className="flex gap-4">
-              {[Instagram, Facebook, Twitter].map((Icon, i) => (
-                <a key={i} href="#" className="w-10 h-10 rounded-full bg-secondary-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors">
-                  <Icon className="w-5 h-5" />
-                </a>
-              ))}
+              <a 
+                href={INSTAGRAM_URL} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-secondary-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a 
+                href={FACEBOOK_URL} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-secondary-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                <Facebook className="w-5 h-5" />
+              </a>
             </div>
+            <a 
+              href={`tel:${PHONE_NUMBER.replace(/\s/g, '')}`}
+              className="flex items-center gap-2 mt-4 text-secondary-foreground/70 hover:text-primary transition-colors"
+            >
+              <Phone className="w-4 h-4" />
+              <span>{PHONE_NUMBER}</span>
+            </a>
           </div>
           
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              {['Shop', 'About Us', 'Contact', 'FAQs'].map(link => (
-                <li key={link}>
-                  <Link to="#" className="text-secondary-foreground/70 hover:text-primary transition-colors">{link}</Link>
+              {quickLinks.map(link => (
+                <li key={link.name}>
+                  <Link to={link.href} className="text-secondary-foreground/70 hover:text-primary transition-colors">
+                    {link.name}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -49,7 +82,7 @@ export function Footer() {
         </div>
         
         <div className="border-t border-secondary-foreground/10 mt-12 pt-8 text-center text-sm text-secondary-foreground/50">
-          © 2024 UNIQLIURZ. All rights reserved.
+          © 2026 UNIQLIURZ. All rights reserved.
         </div>
       </div>
     </footer>
