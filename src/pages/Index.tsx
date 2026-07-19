@@ -6,6 +6,7 @@ import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { ProductMarquee } from '@/components/ProductMarquee';
 import { ScrollSequence } from '@/components/ScrollSequence';
+import { useSEO } from '@/hooks/useSEO';
 import allProducts from '@/data/products';
 
 const ENABLE_SCROLL_SEQUENCE = false;
@@ -103,6 +104,7 @@ const offerings = [
 ];
 
 const Index = () => {
+  useSEO();
   const { scrollYProgress } = useScroll();
   const heroOpacity = useTransform(scrollYProgress, [0, 0.15], [1, 0]);
   const heroScale = useTransform(scrollYProgress, [0, 0.15], [1, 0.95]);

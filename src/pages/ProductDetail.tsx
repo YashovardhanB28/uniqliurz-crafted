@@ -12,6 +12,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Minus, Plus, ArrowLeft, Sparkles, Palette, Type, MessageCircle, ShoppingCart } from "lucide-react";
 import { createShopifyCheckoutUrl } from "@/lib/shopify";
 import { toast } from "sonner";
+import { useSEO } from "@/hooks/useSEO";
+import { productSchema, breadcrumbSchema } from "@/lib/structured-data";
 
 const ProductDetail = () => {
   const { handle } = useParams<{ handle: string }>();
@@ -24,6 +26,13 @@ const ProductDetail = () => {
   const [customNotes, setCustomNotes] = useState("");
   const [showCustomization, setShowCustomization] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+
+  useSEO({
+    title: product?.title,
+    description: product?.description,
+    image: product?.image,
+    url: product ? `/product/${product.handle}` : undefined,
+  });
 
   const handleBuyNow = async () => {
     const variantId = product?.shopifyVariantId;
@@ -89,6 +98,29 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(productSchema({
+            title: product.title,
+            description: product.description,
+            handle: product.handle,
+            image: product.image,
+            price: product.price,
+            currencyCode: product.currencyCode,
+          }))
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbSchema([
+            { name: "Home", url: "/" },
+            { name: "Shop", url: "/shop" },
+            { name: product.title, url: `/product/${product.handle}` },
+          ]))
+        }}
+      />
       <Header />
       
       <main className="pt-24 pb-16">

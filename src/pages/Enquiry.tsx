@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { useSEO } from "@/hooks/useSEO";
 import { useEnquiryStore } from "@/stores/enquiryStore";
 import { formatPrice } from "@/data/products";
 import { Trash2, Minus, Plus, Send, ShoppingBag, ArrowLeft, User, Mail, Phone, Calendar, MessageSquare, Image as ImageIcon } from "lucide-react";

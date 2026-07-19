@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
 import { useProducts } from "@/hooks/useProducts";
+import { useSEO } from "@/hooks/useSEO";
 import { productCategories, LocalProduct } from "@/data/products";
 import { SlidersHorizontal, Grid3X3, LayoutGrid, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
