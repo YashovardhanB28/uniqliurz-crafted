@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
-import products, { productCategories, LocalProduct } from "@/data/products";
+import { useProducts } from "@/hooks/useProducts";
+import { productCategories, LocalProduct } from "@/data/products";
 import { SlidersHorizontal, Grid3X3, LayoutGrid, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,12 +24,10 @@ const Shop = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
-  useEffect(() => {
-    setVisibleCount(ITEMS_PER_PAGE);
-  }, [selectedCategory, sortBy, searchQuery]);
+  const { data: products } = useProducts();
 
   const filteredProducts = useMemo(() => {
-    let result = [...products];
+    let result = [...(products || [])];
 
     if (selectedCategory !== "all") {
       result = result.filter(p => p.category === selectedCategory);
