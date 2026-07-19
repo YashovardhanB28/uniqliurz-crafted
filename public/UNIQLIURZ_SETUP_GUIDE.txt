@@ -1,0 +1,157 @@
+UNIQLIURZ COMPLETE SETUP GUIDE
+=================================
+Website domain: www.uniqliurz.com (live via Shopify)
+Custom frontend: Vercel (connected to GitHub)
+Authored for: Yashovardhan B.
+
+
+SECTION 1: SHOPIFY PAYMENTS (MAKE BUY NOW WORK)
+-------------------------------------------------
+The "Buy Now" button on product pages redirects to Shopify checkout.
+For it to work, you need to set up payment + shipping in Shopify.
+
+Step 1: Payments
+  - Go to Shopify admin > Settings > Payments
+  - Choose a provider:
+    * Shopify Payments (recommended - 2.9%+30c per transaction, no monthly fee)
+    * PayPal (alternative)
+  - Enter your business details (bank account, tax info, etc.)
+  - Save
+
+Step 2: Shipping
+  - Go to Settings > Shipping and delivery
+  - Add shipping zones and rates (US only, or international)
+  - Suggested: Free shipping over $75, flat rate $7.99 under $75
+
+Step 3: Taxes
+  - Go to Settings > Taxes and duties
+  - Enable automatic tax calculation (Shopify handles US sales tax)
+  - This is critical for legal compliance in New Jersey
+
+Once all three are set up, "Buy Now" will work seamlessly.
+Customers click > go to Shopify checkout > pay > you get the order.
+
+
+SECTION 2: DOMAIN SETUP (www.uniqliurz.com -> VERCEL)
+-------------------------------------------------------
+Currently uniqliurz.com points to Shopify (your live store).
+This keeps working - no changes to your live store.
+
+To show the beautiful custom site on www.uniqliurz.com:
+
+Step 1: Already done - Vercel has www.uniqliurz.com added as a domain
+
+Step 2: Add this DNS record at your domain registrar:
+  Type: CNAME
+  Name: www
+  Value/Points to: cname.vercel-dns.com
+
+This sends www.uniqliurz.com traffic to Vercel while uniqliurz.com stays on Shopify.
+
+Result:
+  - uniqliurz.com -> Shopify (your admin/store)
+  - www.uniqliurz.com -> Our custom site (beautiful frontend)
+  - "Buy Now" goes to Shopify checkout (hosted on Shopify's domain)
+
+
+SECTION 3: ADDING/EDITING PRODUCTS
+------------------------------------
+All product management happens in Shopify admin:
+
+1. Go to admin.shopify.com/store/uniqliurz
+2. Click Products
+3. Add new: Click "Add product" > fill title, description, price, images
+4. Edit existing: Click any product > edit fields
+5. For categories: Add a tag matching one of:
+   resin-art, engraved, frames, bottles, keychains, custom
+
+The website automatically pulls products from Shopify.
+No code changes needed when you add/edit/remove products.
+
+
+SECTION 4: SEO - DOMINATE NEW JERSEY SEARCHES
+------------------------------------------------
+Goal: Be the #1 custom gifts brand in New Jersey search results.
+
+STEP A - Google Business Profile (FREE, MOST IMPORTANT)
+  - Go to google.com/business
+  - Create profile with your business address in New Jersey
+  - Add: photos, hours, phone, website (www.uniqliurz.com)
+  - Get verified (Google sends a postcard or video call)
+  - This is what shows up when people search "custom gifts near me"
+  - Critical for local SEO in NJ
+
+STEP B - Google Search Console (FREE)
+  - Go to search.google.com/search-console
+  - Add property: www.uniqliurz.com
+  - Verify domain (follow Google's instructions)
+  - Submit sitemap: www.uniqliurz.com/sitemap.xml
+  - Monitor which keywords bring traffic
+
+STEP C - On-Page SEO (ALREADY DONE)
+  - Each page has proper titles and meta descriptions
+  - Product pages have structured data
+  - Fast loading, mobile responsive
+  - Dark theme with high contrast
+
+STEP D - Content Strategy
+  - Blog posts on your site about:
+    * "Best Personalized Gifts for [Holiday] in New Jersey"
+    * "Custom Resin Art Studio Near Me: Uniqliurz NJ"
+    * "Unique Wedding Gifts Handcrafted in New Jersey"
+  - Each post targets local keywords
+
+STEP E - Backlinks (Get Other Sites To Link To You)
+  - Get listed on NJ business directories
+  - Partner with NJ event planners and wedding coordinators
+  - Sponsor local events
+  - Each backlink = Google trusts you more
+
+
+SECTION 5: MARKETING QUICK START
+---------------------------------
+Week 1: Set up Google Business Profile + Search Console
+Week 2: Create Instagram/TikTok (post product videos daily)
+Week 3: Run Google Ads for "custom gifts New Jersey" ($10/day)
+Week 4: Partner with 5 NJ wedding planners (commission basis)
+
+Instagram strategy:
+  - Video of resin pouring process = viral potential
+  - Before/after of custom gifts
+  - Customer testimonial videos
+  - Use hashtags: #NewJerseyGifts #CustomGiftsNJ #Uniqliurz
+
+
+SECTION 6: PUSHING UPDATES TO THE SITE
+----------------------------------------
+When I make code changes in this session:
+  1. I write code
+  2. I commit to GitHub
+  3. Vercel auto-deploys (takes ~2 minutes)
+  4. Your site updates automatically
+
+When you want changes in the future:
+  - Contact me, or
+  - Hire a React developer who knows Vite + Tailwind + Shopify API
+  - The code is on GitHub at: github.com/YashovardhanB28/uniqliurz-crafted
+
+
+SECTION 7: TECH STACK SUMMARY
+-------------------------------
+- Frontend: React 18 + TypeScript + Vite
+- Styling: Tailwind CSS + shadcn/ui components
+- Animations: Framer Motion
+- Backend: Shopify Storefront API (headless)
+- Hosting: Vercel (free tier)
+- Products: Managed in Shopify admin
+- Checkout: Shopify checkout (handles tax, payment, shipping)
+- Enquiries: WhatsApp (+1 551 229 7949) for custom orders
+
+
+CONTACTS
+---------
+Developer: Yashovardhan B. (you)
+Shopify: admin.shopify.com/store/uniqliurz
+GitHub: github.com/YashovardhanB28/uniqliurz-crafted
+Vercel: vercel.com/yashovardhans-projects-d45b9ef3/uniqliurz-crafted
+WhatsApp Business: +1 551 229 7949
