@@ -4,100 +4,54 @@ import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { useProduct } from "@/hooks/useProducts";
-import { useCartStore } from "@/stores/cartStore";
-import { formatPrice } from "@/lib/shopify";
+import { formatPrice } from "@/data/products";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Minus, Plus, ArrowLeft, Check, ShoppingBag, Sparkles, Palette, Type } from "lucide-react";
-import { toast } from "sonner";
+import { Minus, Plus, ArrowLeft, Sparkles, Palette, Type, MessageCircle, ShoppingCart } from "lucide-react";
+import { createShopifyCheckoutUrl } from "@/lib/shopify";
 
 const ProductDetail = () => {
   const { handle } = useParams<{ handle: string }>();
   const { data: product, isLoading, error } = useProduct(handle || "");
-  const { addItem, isLoading: isAddingToCart } = useCartStore();
   
-  const [selectedVariant, setSelectedVariant] = useState<string | null>(null);
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
-  
-  // Customization state
   const [customText, setCustomText] = useState("");
-  const [customColor, setCustomColor] = useState("#FF6B35");
+  const [customColor, setCustomColor] = useState("#F26522");
   const [customNotes, setCustomNotes] = useState("");
   const [showCustomization, setShowCustomization] = useState(false);
-  const [initialized, setInitialized] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  // Initialize selected options when product loads - using useEffect to avoid setting state during render
-  if (product && !initialized && product.options) {
-    const initialOptions: Record<string, string> = {};
-    product.options.forEach(option => {
-      if (option.values.length > 0) {
-        initialOptions[option.name] = option.values[0];
-      }
-    });
-    
-    // Find matching variant
-    const matchingVariant = product.variants.edges.find(v => 
-      v.node.selectedOptions.every(opt => initialOptions[opt.name] === opt.value)
-    );
-    
-    // Use setTimeout to defer state updates to next tick
-    setTimeout(() => {
-      setSelectedOptions(initialOptions);
-      if (matchingVariant) {
-        setSelectedVariant(matchingVariant.node.id);
-      }
-      setInitialized(true);
-    }, 0);
-  }
-
-  const handleOptionChange = (optionName: string, value: string) => {
-    const newOptions = { ...selectedOptions, [optionName]: value };
-    setSelectedOptions(newOptions);
-    
-    // Find matching variant
-    if (product) {
-      const matchingVariant = product.variants.edges.find(v => 
-        v.node.selectedOptions.every(opt => newOptions[opt.name] === opt.value)
-      );
-      if (matchingVariant) {
-        setSelectedVariant(matchingVariant.node.id);
-      }
+  const handleBuyNow = async () => {
+    const variantId = product?.shopifyVariantId;
+    if (!variantId) return;
+    setCheckoutLoading(true);
+    try {
+      const url = await createShopifyCheckoutUrl(variantId, quantity);
+      window.open(url, '_blank');
+    } catch (err: any) {
+      alert('Could not create checkout: ' + err.message);
+    } finally {
+      setCheckoutLoading(false);
     }
   };
 
-  const currentVariant = product?.variants.edges.find(v => v.node.id === selectedVariant)?.node;
-
-  const handleAddToCart = async () => {
-    if (!product || !currentVariant) return;
-    
-    try {
-      // Include customization in selected options
-      const customOptions = [
-        ...currentVariant.selectedOptions,
-        ...(customText ? [{ name: "Custom Text", value: customText }] : []),
-        ...(customColor !== "#FF6B35" ? [{ name: "Custom Color", value: customColor }] : []),
-        ...(customNotes ? [{ name: "Special Notes", value: customNotes }] : []),
-      ];
-
-      await addItem({
-        product: { node: product },
-        variantId: currentVariant.id,
-        variantTitle: currentVariant.title,
-        price: currentVariant.price,
-        quantity,
-        selectedOptions: customOptions,
-      });
-      
-      toast.success("Added to cart!", {
-        description: `${product.title}${customText ? ` - "${customText}"` : ""} x${quantity}`,
-      });
-    } catch (error) {
-      toast.error("Failed to add to cart");
-    }
+  const generateWhatsAppMessage = () => {
+    if (!product) return "";
+    const lines = [
+      "Hi! I am interested in:",
+      "",
+      "*" + product.title + "*",
+      "Price: " + formatPrice(product.price, product.currencyCode),
+      "Quantity: " + quantity,
+    ];
+    if (customText) lines.push("Personalization: " + customText);
+    if (customColor !== "#F26522") lines.push("Color preference: " + customColor);
+    if (customNotes) lines.push("Notes: " + customNotes);
+    lines.push("", "Can you share more details and confirm availability?");
+    return encodeURIComponent(lines.join("\n"));
   };
 
   if (isLoading) {
@@ -105,7 +59,7 @@ const ProductDetail = () => {
       <div className="min-h-screen bg-background">
         <Header />
         <div className="flex items-center justify-center py-40">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
         </div>
         <Footer />
       </div>
@@ -119,7 +73,7 @@ const ProductDetail = () => {
         <div className="container mx-auto px-4 py-40 text-center">
           <h1 className="text-2xl font-bold text-foreground mb-4">Product not found</h1>
           <Link to="/shop">
-            <Button>
+            <Button className="cursor-pointer">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back to Shop
             </Button>
@@ -130,7 +84,7 @@ const ProductDetail = () => {
     );
   }
 
-  const images = product.images.edges;
+  const images = product.images.length > 0 ? product.images : [product.image];
 
   return (
     <div className="min-h-screen bg-background">
@@ -138,7 +92,6 @@ const ProductDetail = () => {
       
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
-          {/* Breadcrumb */}
           <nav className="mb-8">
             <ol className="flex items-center gap-2 text-sm text-muted-foreground">
               <li><Link to="/" className="hover:text-primary transition-colors">Home</Link></li>
@@ -150,50 +103,40 @@ const ProductDetail = () => {
           </nav>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            {/* Image Gallery */}
             <div className="space-y-4">
               <motion.div
                 key={selectedImage}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="aspect-square bg-secondary/30 rounded-2xl overflow-hidden relative"
+                className="aspect-square bg-secondary/30 rounded-2xl overflow-hidden relative flex items-center justify-center"
               >
-                {images[selectedImage]?.node ? (
-                  <img
-                    src={images[selectedImage].node.url}
-                    alt={images[selectedImage].node.altText || product.title}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                    No image
-                  </div>
-                )}
-                
-                {/* Customizable badge */}
+                <img
+                  src={images[selectedImage]}
+                  alt={product.title}
+                  className="w-full h-full object-contain p-8"
+                />
                 <Badge className="absolute top-4 left-4 bg-primary text-primary-foreground">
                   <Sparkles className="w-3 h-3 mr-1" />
                   Customizable
                 </Badge>
               </motion.div>
               
-              {/* Thumbnails */}
               {images.length > 1 && (
                 <div className="flex gap-3 overflow-x-auto pb-2">
                   {images.map((img, index) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
-                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                      className={`flex-shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
                         selectedImage === index 
                           ? "border-primary" 
                           : "border-transparent hover:border-muted-foreground/30"
                       }`}
                     >
                       <img
-                        src={img.node.url}
-                        alt={img.node.altText || `${product.title} ${index + 1}`}
-                        className="w-full h-full object-cover"
+                        src={img}
+                        alt={`${product.title} ${index + 1}`}
+                        className="w-full h-full object-contain p-1"
                       />
                     </button>
                   ))}
@@ -201,71 +144,31 @@ const ProductDetail = () => {
               )}
             </div>
 
-            {/* Product Info */}
             <div className="space-y-6">
               <div>
                 <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
                   {product.title}
                 </h1>
                 <p className="text-2xl font-semibold text-primary">
-                  {currentVariant 
-                    ? formatPrice(currentVariant.price.amount, currentVariant.price.currencyCode)
-                    : formatPrice(product.priceRange.minVariantPrice.amount, product.priceRange.minVariantPrice.currencyCode)
-                  }
+                  {formatPrice(product.price, product.currencyCode)}
                 </p>
               </div>
 
-              {/* Availability */}
-              {currentVariant && (
-                <Badge variant={currentVariant.availableForSale ? "default" : "secondary"}>
-                  {currentVariant.availableForSale ? (
-                    <><Check className="w-3 h-3 mr-1" /> In Stock</>
-                  ) : (
-                    "Out of Stock"
-                  )}
-                </Badge>
-              )}
+              <div className="flex items-center gap-2">
+                <Badge variant="default">Made to Order</Badge>
+                <Badge variant="secondary">Customizable</Badge>
+              </div>
 
-              {/* Product Options from Shopify */}
-              {product.options && product.options.length > 0 && product.options[0].values.length > 1 && (
-                <div className="space-y-4">
-                  {product.options.map((option) => (
-                    <div key={option.name}>
-                      <label className="block text-sm font-medium text-foreground mb-2">
-                        {option.name}
-                      </label>
-                      <div className="flex flex-wrap gap-2">
-                        {option.values.map((value) => (
-                          <button
-                            key={value}
-                            onClick={() => handleOptionChange(option.name, value)}
-                            className={`px-4 py-2 rounded-lg border transition-all ${
-                              selectedOptions[option.name] === value
-                                ? "border-primary bg-primary/10 text-primary"
-                                : "border-border hover:border-primary/50"
-                            }`}
-                          >
-                            {value}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Customization Toggle */}
               <div className="pt-4 border-t border-border">
                 <button
                   onClick={() => setShowCustomization(!showCustomization)}
-                  className="flex items-center gap-2 text-primary font-medium hover:underline"
+                  className="flex items-center gap-2 text-primary font-medium hover:underline cursor-pointer"
                 >
                   <Sparkles className="w-5 h-5" />
                   {showCustomization ? "Hide" : "Add"} Personalization Options
                 </button>
               </div>
 
-              {/* Customization Options */}
               {showCustomization && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
@@ -278,7 +181,6 @@ const ProductDetail = () => {
                     Personalize Your Gift
                   </h3>
                   
-                  {/* Custom Text */}
                   <div>
                     <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
                       <Type className="w-4 h-4" />
@@ -295,7 +197,6 @@ const ProductDetail = () => {
                     </p>
                   </div>
 
-                  {/* Color Picker */}
                   <div>
                     <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
                       <Palette className="w-4 h-4" />
@@ -309,11 +210,11 @@ const ProductDetail = () => {
                         className="w-12 h-12 rounded-lg cursor-pointer border border-border"
                       />
                       <div className="flex flex-wrap gap-2">
-                        {["#FF6B35", "#3B82F6", "#10B981", "#8B5CF6", "#EC4899", "#F59E0B"].map((color) => (
+                        {["#F26522", "#3B82F6", "#10B981", "#8B5CF6", "#EC4899", "#F59E0B"].map((color) => (
                           <button
                             key={color}
                             onClick={() => setCustomColor(color)}
-                            className={`w-8 h-8 rounded-full border-2 transition-all ${
+                            className={`w-8 h-8 rounded-full border-2 transition-all cursor-pointer ${
                               customColor === color ? "border-foreground scale-110" : "border-transparent"
                             }`}
                             style={{ backgroundColor: color }}
@@ -323,7 +224,6 @@ const ProductDetail = () => {
                     </div>
                   </div>
 
-                  {/* Special Notes */}
                   <div>
                     <label className="text-sm font-medium text-foreground mb-2 block">
                       Special Instructions (Optional)
@@ -336,14 +236,10 @@ const ProductDetail = () => {
                     />
                   </div>
 
-                  {/* Preview */}
                   {customText && (
                     <div className="p-4 rounded-lg bg-background border border-primary/30">
                       <p className="text-xs text-muted-foreground mb-2">Preview:</p>
-                      <p 
-                        className="text-xl font-bold"
-                        style={{ color: customColor }}
-                      >
+                      <p className="text-xl font-bold" style={{ color: customColor }}>
                         "{customText}"
                       </p>
                     </div>
@@ -351,7 +247,6 @@ const ProductDetail = () => {
                 </motion.div>
               )}
 
-              {/* Quantity */}
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
                   Quantity
@@ -362,6 +257,7 @@ const ProductDetail = () => {
                     size="icon"
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
+                    className="cursor-pointer"
                   >
                     <Minus className="w-4 h-4" />
                   </Button>
@@ -370,30 +266,41 @@ const ProductDetail = () => {
                     variant="outline"
                     size="icon"
                     onClick={() => setQuantity(quantity + 1)}
+                    className="cursor-pointer"
                   >
                     <Plus className="w-4 h-4" />
                   </Button>
                 </div>
               </div>
 
-              {/* Add to Cart */}
-              <Button
-                size="lg"
-                className="w-full"
-                onClick={handleAddToCart}
-                disabled={!currentVariant?.availableForSale || isAddingToCart}
-              >
-                {isAddingToCart ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <>
-                    <ShoppingBag className="w-5 h-5 mr-2" />
-                    Add to Cart
-                  </>
+              <div className="flex flex-col sm:flex-row gap-3">
+                {product.shopifyVariantId && (
+                  <Button
+                    size="lg"
+                    onClick={handleBuyNow}
+                    disabled={checkoutLoading}
+                    className="flex-1 bg-gradient-to-r from-[#D94F16] to-[#FF7A2F] text-black font-semibold hover:shadow-[0_0_20px_rgba(242,101,34,0.4)] transition-all cursor-pointer"
+                  >
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    {checkoutLoading ? 'Creating Checkout...' : 'Buy Now'}
+                  </Button>
                 )}
-              </Button>
+                <a
+                  href={"https://wa.me/15512297949?text=" + generateWhatsAppMessage()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={product.shopifyVariantId ? "flex-1" : "block"}
+                >
+                  <Button
+                    size="lg"
+                    className="w-full bg-green-600 hover:bg-green-700 cursor-pointer"
+                  >
+                    <MessageCircle className="w-5 h-5 mr-2" />
+                    Enquire on WhatsApp
+                  </Button>
+                </a>
+              </div>
 
-              {/* Description */}
               {product.description && (
                 <div className="pt-6 border-t border-border">
                   <h3 className="font-medium text-foreground mb-2">Description</h3>
@@ -403,7 +310,6 @@ const ProductDetail = () => {
                 </div>
               )}
 
-              {/* Features */}
               <div className="pt-6 border-t border-border">
                 <h3 className="font-medium text-foreground mb-4">Why Choose Us</h3>
                 <div className="grid grid-cols-2 gap-4">

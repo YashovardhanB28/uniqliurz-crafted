@@ -12,12 +12,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useProducts } from "@/hooks/useProducts";
-import { Loader2, Calendar, IndianRupee, Package, Send, MessageCircle, Gift, Users } from "lucide-react";
+import products, { LocalProduct } from "@/data/products";
+import { Calendar, DollarSign, Package, Send, MessageCircle, Gift, Users } from "lucide-react";
 import { toast } from "sonner";
 
-// Your contact details - update these
-const WHATSAPP_NUMBER = "919876543210"; // Format: country code + number (no + or spaces)
+const WHATSAPP_NUMBER = "15512297949";
 const BUSINESS_EMAIL = "hello@uniqliurz.com";
 
 const occasions = [
@@ -35,16 +34,15 @@ const occasions = [
 ];
 
 const budgetRanges = [
-  "Under ₹500",
-  "₹500 - ₹1,000",
-  "₹1,000 - ₹2,500",
-  "₹2,500 - ₹5,000",
-  "₹5,000 - ₹10,000",
-  "Above ₹10,000"
+  "Under $50",
+  "$50 - $100",
+  "$100 - $250",
+  "$250 - $500",
+  "$500 - $1,000",
+  "Above $1,000"
 ];
 
 const Customize = () => {
-  const { data: products, isLoading: isProductsLoading } = useProducts(50);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const [formData, setFormData] = useState({
@@ -252,15 +250,14 @@ const Customize = () => {
                 <Select
                   value={formData.selectedProduct}
                   onValueChange={(value) => setFormData({ ...formData, selectedProduct: value })}
-                  disabled={isProductsLoading}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder={isProductsLoading ? "Loading products..." : "Choose a product or 'Other'"} />
+                    <SelectValue placeholder="Choose a product or 'Other'" />
                   </SelectTrigger>
                   <SelectContent>
-                    {products?.map((p) => (
-                      <SelectItem key={p.node.id} value={p.node.title}>
-                        {p.node.title}
+                    {products.map((p: LocalProduct) => (
+                      <SelectItem key={p.id} value={p.title}>
+                        {p.title}
                       </SelectItem>
                     ))}
                     <SelectItem value="other" className="font-medium text-primary">
@@ -357,7 +354,7 @@ const Customize = () => {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                  <IndianRupee className="w-4 h-4" />
+                  <DollarSign className="w-4 h-4" />
                   Budget Range *
                 </label>
                 <Select

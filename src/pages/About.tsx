@@ -1,255 +1,175 @@
 import { motion } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { Gift, Heart, Sparkles, Users, Star, Palette, Clock, Award } from "lucide-react";
+import { Shield } from "lucide-react";
+
+const fadeUp = {
+  initial: { opacity: 0, y: 30 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }
+};
+
+const trustItems = [
+  'Uniqliurz LLC is a registered single-member LLC based in New Jersey, USA.',
+  'Secure payment processing through Shopify checkout, trusted by millions.',
+  'Clear proposals and documentation suitable for internal approvals and budgets.',
+  'A defined process that outlines every key decision before production begins with no surprises.',
+  'Thoughtful packaging and presentation so gifts feel ready the moment they arrive.',
+  'Nationwide shipping across the United States. We handle the logistics.',
+];
 
 const About = () => {
-  const values = [
-    {
-      icon: Heart,
-      title: "Crafted with Love",
-      description: "Every piece is handmade with attention to detail and genuine care for the recipient."
-    },
-    {
-      icon: Sparkles,
-      title: "Premium Quality",
-      description: "We use only the finest materials to ensure each gift is a lasting treasure."
-    },
-    {
-      icon: Gift,
-      title: "Truly Unique",
-      description: "Custom designs mean your gift will be one-of-a-kind, just like the person receiving it."
-    },
-    {
-      icon: Users,
-      title: "Customer First",
-      description: "Your satisfaction is our priority. We work closely with you to bring your vision to life."
-    }
-  ];
-
-  const stats = [
-    { number: "500+", label: "Happy Customers" },
-    { number: "1000+", label: "Gifts Crafted" },
-    { number: "100%", label: "Satisfaction Rate" },
-    { number: "5★", label: "Average Rating" },
-  ];
-
-  const process = [
-    {
-      icon: Palette,
-      title: "Share Your Vision",
-      description: "Tell us about your idea, occasion, and who the gift is for. No concept is too big or too small!"
-    },
-    {
-      icon: Star,
-      title: "Design & Approve",
-      description: "We create a digital mockup for your review. Request revisions until it's exactly what you imagined."
-    },
-    {
-      icon: Clock,
-      title: "Crafted by Hand",
-      description: "Our artisans meticulously handcraft your piece using premium materials and time-tested techniques."
-    },
-    {
-      icon: Award,
-      title: "Delivered with Care",
-      description: "Your finished gift arrives beautifully packaged, ready to create unforgettable memories."
-    }
-  ];
-
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Hero */}
-      <section className="pt-32 pb-20 bg-gradient-to-b from-secondary to-background">
+      <section className="pt-36 pb-20">
         <div className="container mx-auto px-4 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-bold text-foreground mb-6"
-          >
-            About <span className="text-primary">UNIQLIURZ</span>
-          </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-xl text-muted-foreground max-w-2xl mx-auto"
+            transition={{ duration: 0.6 }}
+            className="text-xs tracking-[0.24em] uppercase text-muted-foreground mb-5"
           >
-            Where creativity meets craftsmanship to create gifts that tell your story
+            About Uniqliurz
           </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15, duration: 0.6 }}
+            className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-[0.16em] uppercase text-foreground"
+          >
+            A Studio Built Around<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F26522] to-[#FF7A2F]">Meaningful Design</span>
+          </motion.h1>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-12 bg-primary/5">
+      <section className="py-20 border-t border-border">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+            <motion.div {...fadeUp}>
+              <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-4">Our Story</p>
+              <h2 className="text-3xl md:text-4xl font-bold tracking-[0.14em] uppercase text-foreground">
+                Every Creation Begins<br />
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F26522] to-[#FF7A2F]">With Intention</span>
+              </h2>
+            </motion.div>
+            <motion.div {...fadeUp} transition={{ delay: 0.15 }}>
+              <p className="text-base md:text-lg text-foreground/80 leading-relaxed mb-6">
+                At Uniqliurz, every creation begins with intention. We transform life's milestones and business moments into refined, personalized keepsakes crafted with care.
+              </p>
+              <p className="text-base md:text-lg text-foreground/70 leading-relaxed mb-6">
+                From private celebrations to corporate partnerships, our work blends aesthetic detail with emotional relevance so gifts feel considered, not generic.
+              </p>
+              <p className="text-base md:text-lg text-foreground/70 leading-relaxed mb-6">
+                What sets us apart is our commitment to collaboration. We do not just make products. We partner with you to bring your vision to life, ensuring every gift is as unique as the story behind it.
+              </p>
+              <p className="text-base md:text-lg text-foreground/80 leading-relaxed font-medium">
+                Based in New Jersey, we ship across the United States. Every piece is made to order and no two creations are ever the same.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 border-t border-border bg-muted/40">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            <motion.div {...fadeUp} className="rounded-xl border border-border bg-card p-8">
+              <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-4">Our Mission</p>
+              <p className="text-foreground/80 leading-relaxed">
+                To transform life's most meaningful moments into tangible, lasting keepsakes. We blend craftsmanship with genuine care to create gifts that resonate for individuals marking milestones and for organizations building culture.
+              </p>
+            </motion.div>
+            <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="rounded-xl border border-border bg-card p-8">
+              <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-4">Our Vision</p>
+              <p className="text-foreground/80 leading-relaxed">
+                To be the most trusted partner for thoughtfully crafted gifts across the United States, where every creation tells a story and every client feels genuinely understood.
+              </p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 border-t border-border">
+        <div className="container mx-auto px-4">
+          <motion.div {...fadeUp} className="text-center mb-16">
+            <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-4">How we work</p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-[0.14em] uppercase text-foreground">
+              A Clear, <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F26522] to-[#FF7A2F]">Four-Step Process</span>
+            </h2>
+          </motion.div>
+
+          <div className="relative pl-8 border-l border-border max-w-3xl mx-auto">
+            {[
+              { step: 'Step 1', title: 'Share Your Brief', body: 'Fill in our short inquiry form. Tell us the occasion, who you are gifting, your timeline and your budget.' },
+              { step: 'Step 2', title: 'We Connect and Align', body: 'We review your brief and reach out within 24 hours via phone, WhatsApp or Zoom to discuss your ideas in detail.' },
+              { step: 'Step 3', title: 'Receive a Tailored Proposal', body: 'You receive a clear proposal with creative direction, materials, packaging, timelines and investment range.' },
+              { step: 'Step 4', title: 'Production and Delivery', body: 'Once approved, we move into production. We keep you updated throughout and coordinate delivery anywhere in the US.' },
+            ].map((step, i) => (
               <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                key={i}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center"
+                transition={{ delay: i * 0.1 }}
+                className="relative pb-10 last:pb-0"
               >
-                <div className="text-3xl md:text-4xl font-bold text-primary mb-2">{stat.number}</div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="absolute -left-[33px] top-1 w-3 h-3 rounded-full bg-background border-2 border-primary shadow-[0_0_12px_rgba(242,101,34,0.5)]" />
+                <p className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground mb-1">{step.step}</p>
+                <h3 className="text-base font-semibold tracking-[0.14em] uppercase text-foreground mb-1">{step.title}</h3>
+                <p className="text-sm text-foreground/70 leading-relaxed">{step.body}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Story Section - No Image */}
-      <section className="py-20">
+      <section className="py-20 border-t border-border bg-muted/40">
         <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto text-center"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-              Our Story
+          <motion.div {...fadeUp} className="max-w-3xl mx-auto">
+            <p className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-4 text-center">Trust and peace of mind</p>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-[0.14em] uppercase text-foreground text-center mb-12">
+              Designed to Feel <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F26522] to-[#FF7A2F]">Considered and Secure</span>
             </h2>
-            <div className="space-y-6 text-lg text-muted-foreground leading-relaxed">
-              <p>
-                <span className="text-primary font-semibold">UNIQLIURZ</span> was born from a simple belief: that the best gifts are the ones 
-                that carry meaning. We started as a small studio with a passion for 
-                creating personalized treasures that celebrate life's special moments.
-              </p>
-              <p>
-                Today, we've grown into a community of artisans and designers dedicated 
-                to transforming your ideas into tangible expressions of love, appreciation, 
-                and celebration. From resin art to engraved keepsakes, every piece we 
-                create is a labor of love.
-              </p>
-              <p>
-                What sets us apart is our commitment to <span className="text-primary font-semibold">collaboration</span>. We don't just 
-                make products—we partner with you to bring your vision to life, ensuring 
-                every gift is as unique as the story behind it.
-              </p>
-              <p className="text-primary font-medium text-xl mt-8">
-                Currently making smiles across the USA — coming worldwide soon! 🌎
-              </p>
+            <div className="space-y-4">
+              {trustItems.map((item, i) => (
+                <motion.div
+                  key={i}
+                  initial={{ opacity: 0, x: -10 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.05 }}
+                  className="flex items-start gap-3 text-sm text-foreground/70"
+                >
+                  <Shield className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                  <span>{item}</span>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Our Process */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Our Creative Process
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              From your idea to a finished masterpiece — here's how we bring your vision to life
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {process.map((step, index) => (
-              <motion.div
-                key={step.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="relative text-center p-6 bg-background rounded-xl border border-border"
-              >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold">
-                  {index + 1}
-                </div>
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 mt-4">
-                  <step.icon className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">
-                  {step.title}
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  {step.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Values */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Our Values
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              The principles that guide everything we create
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {values.map((value, index) => (
-              <motion.div
-                key={value.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="text-center p-6"
-              >
-                <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                  <value.icon className="w-8 h-8 text-primary" />
-                </div>
-                <h3 className="text-xl font-semibold text-foreground mb-2">
-                  {value.title}
-                </h3>
-                <p className="text-muted-foreground text-sm">
-                  {value.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 bg-secondary">
+      <section className="py-20 border-t border-border">
         <div className="container mx-auto px-4 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-2xl mx-auto"
-          >
-            <h2 className="text-3xl font-bold text-secondary-foreground mb-4">
-              Ready to Create Something Special?
+          <motion.div {...fadeUp}>
+            <h2 className="text-3xl md:text-4xl font-bold tracking-[0.14em] uppercase text-foreground mb-4">
+              Let's Create Something <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F26522] to-[#FF7A2F]">Exceptional</span>
             </h2>
-            <p className="text-secondary-foreground/70 mb-8">
-              Let's work together to bring your gift ideas to life.
+            <p className="text-foreground/60 mb-8 max-w-xl mx-auto">
+              If you have an idea, a milestone or a gifting brief, share it with us.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a href="/customize">
-                <button className="px-8 py-3 bg-primary text-primary-foreground rounded-full font-medium hover:bg-primary/90 transition-colors">
+                <button className="px-8 py-4 bg-gradient-to-r from-[#D94F16] to-[#FF7A2F] text-black font-semibold tracking-[0.18em] uppercase text-sm rounded-md cursor-pointer">
                   Start Custom Order
                 </button>
               </a>
               <a href="/contact">
-                <button className="px-8 py-3 bg-secondary-foreground/10 text-secondary-foreground rounded-full font-medium hover:bg-secondary-foreground/20 transition-colors">
+                <button className="px-8 py-4 border border-border text-foreground font-semibold tracking-[0.18em] uppercase text-sm rounded-md bg-transparent cursor-pointer">
                   Get in Touch
                 </button>
               </a>

@@ -5,7 +5,7 @@ import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, Phone, MapPin, Send, Loader2 } from "lucide-react";
+import { Mail, Phone, MapPin, Send, Loader2, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const Contact = () => {
@@ -20,35 +20,31 @@ const Contact = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
-    // Simulate form submission
     await new Promise(resolve => setTimeout(resolve, 1500));
-    
     toast.success("Message sent!", {
-      description: "We'll get back to you as soon as possible."
+      description: "We will get back to you as soon as possible."
     });
-    
     setFormData({ name: "", email: "", subject: "", message: "" });
     setIsSubmitting(false);
   };
 
   const contactInfo = [
     {
-      icon: Mail,
-      label: "Email",
-      value: "hello@uniqliurz.com",
-      href: "mailto:hello@uniqliurz.com"
-    },
-    {
       icon: Phone,
       label: "Phone",
-      value: "+1 (555) 123-4567",
-      href: "tel:+15551234567"
+      value: "+1 551 229 7949",
+      href: "tel:+15512297949"
+    },
+    {
+      icon: MessageCircle,
+      label: "WhatsApp",
+      value: "+1 551 229 7949",
+      href: "https://wa.me/15512297949"
     },
     {
       icon: MapPin,
       label: "Location",
-      value: "New York, NY",
+      value: "New Jersey, USA",
       href: null
     }
   ];
@@ -57,90 +53,90 @@ const Contact = () => {
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Hero */}
-      <section className="pt-32 pb-20 bg-gradient-to-b from-secondary to-background">
+      <section className="pt-36 pb-20">
         <div className="container mx-auto px-4 text-center">
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-xs tracking-[0.24em] uppercase text-muted-foreground mb-5"
+          >
+            Get in touch
+          </motion.p>
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-6xl font-bold text-foreground mb-6"
+            transition={{ delay: 0.15 }}
+            className="text-4xl md:text-6xl font-bold tracking-[0.16em] uppercase text-foreground"
           >
-            Get in <span className="text-primary">Touch</span>
+            Let's Start a<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F26522] to-[#FF7A2F]">Conversation</span>
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-xl text-muted-foreground max-w-2xl mx-auto"
+            transition={{ delay: 0.25 }}
+            className="text-foreground/60 mt-6 max-w-xl mx-auto"
           >
-            Have a question or want to discuss a custom order? We'd love to hear from you.
+            Have a question or want to discuss a custom order? We would love to hear from you.
           </motion.p>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section className="py-20">
+      <section className="py-20 border-t border-border">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Contact Form */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.2 }}
             >
-              <h2 className="text-2xl font-bold text-foreground mb-6">
-                Send us a message
-              </h2>
+              <h2 className="text-lg tracking-[0.18em] uppercase text-foreground mb-8">Send us a message</h2>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Name
-                    </label>
+                    <label className="block text-xs text-muted-foreground mb-2">Name</label>
                     <Input
                       required
                       placeholder="Your name"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="bg-card border-border text-foreground placeholder:text-foreground/30"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">
-                      Email
-                    </label>
+                    <label className="block text-xs text-muted-foreground mb-2">Email</label>
                     <Input
                       required
                       type="email"
                       placeholder="your@email.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="bg-card border-border text-foreground placeholder:text-foreground/30"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Subject
-                  </label>
+                  <label className="block text-xs text-muted-foreground mb-2">Subject</label>
                   <Input
                     required
-                    placeholder="What's this about?"
+                    placeholder="What is this about?"
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                    className="bg-card border-border text-foreground placeholder:text-foreground/30"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">
-                    Message
-                  </label>
+                  <label className="block text-xs text-muted-foreground mb-2">Message</label>
                   <Textarea
                     required
                     rows={6}
                     placeholder="Tell us about your project or ask us anything..."
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    className="bg-card border-border text-foreground placeholder:text-foreground/30"
                   />
                 </div>
-                <Button type="submit" size="lg" disabled={isSubmitting}>
+                <Button type="submit" size="lg" disabled={isSubmitting} className="bg-gradient-to-r from-[#D94F16] to-[#FF7A2F] text-black font-semibold hover:shadow-[0_0_20px_rgba(242,101,34,0.5)] cursor-pointer">
                   {isSubmitting ? (
                     <Loader2 className="w-5 h-5 animate-spin" />
                   ) : (
@@ -153,7 +149,6 @@ const Contact = () => {
               </form>
             </motion.div>
 
-            {/* Contact Info */}
             <motion.div
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
@@ -161,21 +156,21 @@ const Contact = () => {
               className="space-y-8"
             >
               <div>
-                <h2 className="text-2xl font-bold text-foreground mb-6">
-                  Contact Information
-                </h2>
+                <h2 className="text-lg tracking-[0.18em] uppercase text-foreground mb-8">Contact Information</h2>
                 <div className="space-y-6">
                   {contactInfo.map((info) => (
                     <div key={info.label} className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 rounded-xl border border-border bg-card flex items-center justify-center flex-shrink-0">
                         <info.icon className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm text-muted-foreground">{info.label}</p>
+                        <p className="text-xs text-muted-foreground">{info.label}</p>
                         {info.href ? (
                           <a 
                             href={info.href}
                             className="text-foreground font-medium hover:text-primary transition-colors"
+                            target={info.href.startsWith('http') ? '_blank' : undefined}
+                            rel={info.href.startsWith('http') ? 'noopener noreferrer' : undefined}
                           >
                             {info.value}
                           </a>
@@ -188,35 +183,20 @@ const Contact = () => {
                 </div>
               </div>
 
-              {/* FAQ Preview */}
-              <div className="bg-secondary/30 rounded-2xl p-6">
-                <h3 className="text-lg font-semibold text-foreground mb-4">
-                  Frequently Asked Questions
-                </h3>
-                <div className="space-y-4">
+              <div className="rounded-xl border border-border bg-card p-6">
+                <h3 className="text-xs tracking-[0.18em] uppercase text-muted-foreground mb-6">Frequently Asked Questions</h3>
+                <div className="space-y-5">
                   <div>
-                    <p className="font-medium text-foreground text-sm">
-                      How long does a custom order take?
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Most custom orders are completed within 5-7 business days.
-                    </p>
+                    <p className="text-sm font-medium text-foreground mb-1">How long does a custom order take?</p>
+                    <p className="text-sm text-foreground/50">Most custom orders are completed within 5-7 business days.</p>
                   </div>
                   <div>
-                    <p className="font-medium text-foreground text-sm">
-                      Do you ship internationally?
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Yes! We ship worldwide with tracking on all orders.
-                    </p>
+                    <p className="text-sm font-medium text-foreground mb-1">Do you ship across the US?</p>
+                    <p className="text-sm text-foreground/50">Yes. We ship nationwide from New Jersey with tracking on all orders.</p>
                   </div>
                   <div>
-                    <p className="font-medium text-foreground text-sm">
-                      Can I see a preview before production?
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Absolutely. We provide digital mockups for approval.
-                    </p>
+                    <p className="text-sm font-medium text-foreground mb-1">Can I see a preview before production?</p>
+                    <p className="text-sm text-foreground/50">Absolutely. We provide digital mockups for your approval before we start crafting.</p>
                   </div>
                 </div>
               </div>

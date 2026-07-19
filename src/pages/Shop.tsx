@@ -1,10 +1,10 @@
-import { useState, useMemo } from "react";
-import { motion } from "framer-motion";
+import { useState, useMemo, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { ProductCard } from "@/components/ProductCard";
-import { useProducts } from "@/hooks/useProducts";
-import { Loader2, SlidersHorizontal, Grid3X3, LayoutGrid, X } from "lucide-react";
+import products, { productCategories, LocalProduct } from "@/data/products";
+import { SlidersHorizontal, Grid3X3, LayoutGrid, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -14,75 +14,63 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-// Product categories based on your Shopify products
-const categories = [
-  { id: "all", name: "All Products" },
-  { id: "resin-art", name: "Resin Art" },
-  { id: "engraved", name: "Engraved Items" },
-  { id: "frames", name: "Frames & Art" },
-  { id: "bottles", name: "Water Bottles" },
-  { id: "keychains", name: "Keychains" },
-  { id: "custom", name: "Custom Gifts" },
-];
+const ITEMS_PER_PAGE = 12;
 
 const Shop = () => {
-  const { data: products, isLoading, error } = useProducts(50);
   const [sortBy, setSortBy] = useState("featured");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [gridSize, setGridSize] = useState<3 | 4>(4);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
 
-  // Filter products by category (based on title/tags)
+  useEffect(() => {
+    setVisibleCount(ITEMS_PER_PAGE);
+  }, [selectedCategory, sortBy, searchQuery]);
+
   const filteredProducts = useMemo(() => {
-    if (!products) return [];
-    if (selectedCategory === "all") return products;
-    
-    return products.filter(product => {
-      const title = product.node.title.toLowerCase();
-      const description = product.node.description?.toLowerCase() || "";
-      
-      switch (selectedCategory) {
-        case "resin-art":
-          return title.includes("resin") || description.includes("resin");
-        case "engraved":
-          return title.includes("engrav") || description.includes("engrav");
-        case "frames":
-          return title.includes("frame") || title.includes("art") || description.includes("frame");
-        case "bottles":
-          return title.includes("bottle") || title.includes("tumbler") || description.includes("bottle");
-        case "keychains":
-          return title.includes("keychain") || title.includes("key chain") || description.includes("keychain");
-        case "custom":
-          return title.includes("custom") || description.includes("personalized");
-        default:
-          return true;
-      }
-    });
-  }, [products, selectedCategory]);
+    let result = [...products];
 
-  // Sort products
-  const sortedProducts = useMemo(() => {
-    return [...filteredProducts].sort((a, b) => {
-      switch (sortBy) {
-        case "price-low":
-          return parseFloat(a.node.priceRange.minVariantPrice.amount) - parseFloat(b.node.priceRange.minVariantPrice.amount);
-        case "price-high":
-          return parseFloat(b.node.priceRange.minVariantPrice.amount) - parseFloat(a.node.priceRange.minVariantPrice.amount);
-        case "name-az":
-          return a.node.title.localeCompare(b.node.title);
-        case "name-za":
-          return b.node.title.localeCompare(a.node.title);
-        default:
-          return 0;
-      }
-    });
-  }, [filteredProducts, sortBy]);
+    if (selectedCategory !== "all") {
+      result = result.filter(p => p.category === selectedCategory);
+    }
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(p =>
+        p.title.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q)
+      );
+    }
+
+    switch (sortBy) {
+      case "price-low":
+        result.sort((a, b) => a.price - b.price);
+        break;
+      case "price-high":
+        result.sort((a, b) => b.price - a.price);
+        break;
+      case "name-az":
+        result.sort((a, b) => a.title.localeCompare(b.title));
+        break;
+      case "name-za":
+        result.sort((a, b) => b.title.localeCompare(a.title));
+        break;
+    }
+
+    return result;
+  }, [selectedCategory, sortBy, searchQuery]);
+
+  const displayedProducts = useMemo(() => {
+    return filteredProducts.slice(0, visibleCount);
+  }, [filteredProducts, visibleCount]);
+
+  const hasMore = visibleCount < filteredProducts.length;
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
-      {/* Hero Banner */}
-      <section className="pt-24 pb-12 bg-gradient-to-b from-secondary to-background">
+      <section className="pt-28 pb-12 bg-gradient-to-b from-secondary to-background">
         <div className="container mx-auto px-4 text-center">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -102,15 +90,14 @@ const Shop = () => {
         </div>
       </section>
 
-      {/* Category Pills */}
       <section className="py-6 border-b border-border">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap gap-2 justify-center">
-            {categories.map((category) => (
+            {productCategories.map((category) => (
               <motion.button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
                   selectedCategory === category.id
                     ? "bg-primary text-primary-foreground"
                     : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
@@ -125,45 +112,40 @@ const Shop = () => {
         </div>
       </section>
 
-      {/* Filters & Products */}
       <section className="py-12">
         <div className="container mx-auto px-4">
-          {/* Filter Bar */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
             <div className="flex items-center gap-4">
               <p className="text-muted-foreground">
-                {sortedProducts.length} product{sortedProducts.length !== 1 ? 's' : ''}
+                {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''}
               </p>
-              {selectedCategory !== "all" && (
+              {(selectedCategory !== "all" || searchQuery) && (
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => setSelectedCategory("all")}
-                  className="text-primary"
+                  onClick={() => { setSelectedCategory("all"); setSearchQuery(""); }}
+                  className="text-primary cursor-pointer"
                 >
                   <X className="w-3 h-3 mr-1" />
-                  Clear filter
+                  Clear filters
                 </Button>
               )}
             </div>
             <div className="flex items-center gap-4">
-              {/* Grid Toggle */}
               <div className="hidden md:flex items-center gap-1 border border-border rounded-lg p-1">
                 <button
                   onClick={() => setGridSize(3)}
-                  className={`p-2 rounded ${gridSize === 3 ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`p-2 rounded cursor-pointer ${gridSize === 3 ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   <LayoutGrid className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setGridSize(4)}
-                  className={`p-2 rounded ${gridSize === 4 ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+                  className={`p-2 rounded cursor-pointer ${gridSize === 4 ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
                 >
                   <Grid3X3 className="w-4 h-4" />
                 </button>
               </div>
-              
-              {/* Sort */}
               <div className="flex items-center gap-2">
                 <SlidersHorizontal className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground hidden sm:inline">Sort by:</span>
@@ -183,36 +165,56 @@ const Shop = () => {
             </div>
           </div>
 
-          {/* Products Grid */}
-          {isLoading ? (
-            <div className="flex items-center justify-center py-20">
-              <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
-          ) : error ? (
+          <div className="relative mb-8 max-w-md mx-auto sm:mx-0">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <input
+              type="text"
+              placeholder="Search products..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary transition-colors"
+            />
+          </div>
+
+          {filteredProducts.length === 0 ? (
             <div className="text-center py-20">
-              <p className="text-destructive mb-4">Failed to load products</p>
-              <Button onClick={() => window.location.reload()}>Try Again</Button>
-            </div>
-          ) : sortedProducts.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-muted-foreground text-lg mb-4">No products found in this category</p>
-              <Button variant="outline" onClick={() => setSelectedCategory("all")}>
+              <p className="text-muted-foreground text-lg mb-4">No products found</p>
+              <Button variant="outline" onClick={() => { setSelectedCategory("all"); setSearchQuery(""); }} className="cursor-pointer">
                 View All Products
               </Button>
             </div>
           ) : (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-              className={`grid grid-cols-1 sm:grid-cols-2 ${
-                gridSize === 3 ? "lg:grid-cols-3" : "lg:grid-cols-3 xl:grid-cols-4"
-              } gap-6`}
-            >
-              {sortedProducts.map((product, index) => (
-                <ProductCard key={product.node.id} product={product} index={index} />
-              ))}
-            </motion.div>
+            <>
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+                className={`grid grid-cols-1 sm:grid-cols-2 ${
+                  gridSize === 3 ? "lg:grid-cols-3" : "lg:grid-cols-3 xl:grid-cols-4"
+                } gap-6`}
+              >
+                {displayedProducts.map((product, index) => (
+                  <ProductCard key={product.id} product={product} index={index} />
+                ))}
+              </motion.div>
+
+              {hasMore && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="mt-12 text-center"
+                >
+                  <Button
+                    onClick={() => setVisibleCount(prev => prev + ITEMS_PER_PAGE)}
+                    variant="outline"
+                    size="lg"
+                    className="cursor-pointer"
+                  >
+                    Load More ({filteredProducts.length - visibleCount} remaining)
+                  </Button>
+                </motion.div>
+              )}
+            </>
           )}
         </div>
       </section>

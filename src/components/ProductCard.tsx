@@ -1,37 +1,27 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ShoppingCart, Eye } from 'lucide-react';
-import { ShopifyProduct, formatPrice } from '@/lib/shopify';
-import { useCartStore } from '@/stores/cartStore';
-import { toast } from 'sonner';
+import { Eye, ClipboardPlus, Check } from 'lucide-react';
+import { LocalProduct, formatPrice } from '@/data/products';
+import { useEnquiryStore } from '@/stores/enquiryStore';
+import { useState } from 'react';
 
 interface ProductCardProps {
-  product: ShopifyProduct;
+  product: LocalProduct;
   index?: number;
 }
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
-  const { node } = product;
-  const addItem = useCartStore(state => state.addItem);
-  const isLoading = useCartStore(state => state.isLoading);
-  const firstVariant = node.variants.edges[0]?.node;
-  const image = node.images.edges[0]?.node;
+  const addItem = useEnquiryStore(s => s.addItem);
+  const items = useEnquiryStore(s => s.items);
+  const isInList = items.some(i => i.product.id === product.id);
+  const [added, setAdded] = useState(false);
 
-  const handleAddToCart = async (e: React.MouseEvent) => {
+  const handleAddToEnquiry = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!firstVariant) return;
-    
-    await addItem({
-      product,
-      variantId: firstVariant.id,
-      variantTitle: firstVariant.title,
-      price: firstVariant.price,
-      quantity: 1,
-      selectedOptions: firstVariant.selectedOptions || []
-    });
-    
-    toast.success('Added to cart!', { description: node.title });
+    addItem(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
   };
 
   return (
@@ -41,28 +31,27 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       viewport={{ once: true, margin: '-50px' }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
     >
-      <Link to={`/product/${node.handle}`} className="group block">
+      <Link to={`/product/${product.handle}`} className="group block">
         <div className="product-card bg-card border border-border overflow-hidden">
-          <div className="relative aspect-square overflow-hidden bg-muted">
-            {image ? (
-              <img
-                src={image.url}
-                alt={image.altText || node.title}
-                className="product-card-image w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-muted-foreground">No Image</div>
-            )}
-            
+          <div className="relative aspect-square overflow-hidden bg-muted flex items-center justify-center">
+            <img
+              src={product.image}
+              alt={product.title}
+              className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
+              loading="lazy"
+            />
             <div className="absolute inset-0 bg-secondary/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3">
               <motion.button
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={handleAddToCart}
-                disabled={isLoading || !firstVariant?.availableForSale}
-                className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center shadow-lg"
+                onClick={handleAddToEnquiry}
+                className={`w-12 h-12 rounded-full flex items-center justify-center shadow-lg cursor-pointer ${
+                  added || isInList
+                    ? 'bg-green-500 text-white'
+                    : 'bg-primary text-primary-foreground'
+                }`}
               >
-                <ShoppingCart className="w-5 h-5" />
+                {added || isInList ? <Check className="w-5 h-5" /> : <ClipboardPlus className="w-5 h-5" />}
               </motion.button>
               <motion.div
                 whileHover={{ scale: 1.1 }}
@@ -72,14 +61,25 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
               </motion.div>
             </div>
           </div>
-          
           <div className="p-4">
             <h3 className="font-medium text-foreground truncate group-hover:text-primary transition-colors">
-              {node.title}
+              {product.title}
             </h3>
             <p className="text-lg font-bold text-primary mt-1">
-              {formatPrice(node.priceRange.minVariantPrice.amount, node.priceRange.minVariantPrice.currencyCode)}
+              {formatPrice(product.price, product.currencyCode)}
             </p>
+            <button
+              onClick={handleAddToEnquiry}
+              className={`inline-flex items-center gap-1.5 mt-3 text-xs font-medium transition-colors cursor-pointer bg-transparent border-none ${
+                added || isInList ? 'text-green-500' : 'text-muted-foreground hover:text-primary'
+              }`}
+            >
+              {added || isInList ? (
+                <><Check className="w-3.5 h-3.5" /> Added to Enquiry</>
+              ) : (
+                <><ClipboardPlus className="w-3.5 h-3.5" /> Add to Enquiry</>
+              )}
+            </button>
           </div>
         </div>
       </Link>

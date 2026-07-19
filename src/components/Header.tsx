@@ -1,21 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Menu, X, Gift } from 'lucide-react';
-import { CartDrawer } from './CartDrawer';
+import { Menu, X, ClipboardList } from 'lucide-react';
+import { useEnquiryStore } from '@/stores/enquiryStore';
 
 const navLinks = [
   { name: 'Home', href: '/' },
+  { name: 'About', href: '/about' },
   { name: 'Shop', href: '/shop' },
   { name: 'Customize', href: '/customize' },
-  { name: 'About', href: '/about' },
   { name: 'Contact', href: '/contact' },
 ];
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const enquiryCount = useEnquiryStore(s => s.totalItems());
 
   useEffect(() => {
     const handleScroll = () => {
@@ -29,8 +29,8 @@ export function Header() {
     <motion.header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled 
-          ? 'bg-secondary/95 backdrop-blur-md shadow-lg' 
-          : 'bg-secondary'
+          ? 'bg-black/90 backdrop-blur-md border-b border-white/5' 
+          : 'bg-transparent'
       }`}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -38,80 +38,58 @@ export function Header() {
     >
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-16 md:h-20">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group">
-            <motion.div
-              className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center"
-              whileHover={{ scale: 1.05 }}
-              transition={{ duration: 0.2 }}
-            >
-              <Gift className="w-6 h-6 text-primary-foreground" />
-            </motion.div>
-            <span className="text-xl md:text-2xl font-display font-bold text-primary-foreground tracking-tight">
-              UNI<span className="text-primary">Q</span>LIURZ
+          <Link to="/" className="flex items-center gap-3 group">
+            <span className="text-lg md:text-xl tracking-[0.18em] uppercase text-white font-bold">
+              UNI<span className="text-[#F26522]">Q</span>LIURZ
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 to={link.href}
-                className="nav-link text-sm uppercase tracking-widest"
+                className="text-[11px] tracking-[0.18em] uppercase text-white/70 hover:text-[#F26522] transition-colors duration-200"
               >
                 {link.name}
               </Link>
             ))}
+            <Link
+              to="/enquiry"
+              className="relative flex items-center gap-1 text-[11px] tracking-[0.18em] uppercase text-white/70 hover:text-[#F26522] transition-colors duration-200"
+            >
+              <ClipboardList className="w-4 h-4" />
+              Enquiry
+              {enquiryCount > 0 && (
+                <span className="px-1.5 py-0.5 bg-[#F26522] text-black text-[10px] font-bold rounded-full leading-none">
+                  {enquiryCount}
+                </span>
+              )}
+            </Link>
+            <a
+              href="https://wa.me/15512297949"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[11px] tracking-[0.16em] uppercase font-semibold px-4 py-2 bg-gradient-to-r from-[#D94F16] to-[#FF7A2F] text-black rounded-md hover:shadow-[0_0_15px_rgba(242,101,34,0.5)] transition-shadow duration-200"
+            >
+              WhatsApp Us
+            </a>
           </nav>
 
-          {/* Right Section */}
-          <div className="flex items-center gap-3">
-            {/* Search */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden w-10 h-10 flex items-center justify-center text-white"
+          >
             <motion.div
-              className="relative hidden md:flex items-center"
-              animate={{ width: isSearchOpen ? 280 : 40 }}
-              transition={{ duration: 0.3, ease: 'easeOut' }}
+              animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
+              transition={{ duration: 0.3 }}
             >
-              <motion.input
-                type="text"
-                placeholder="Search products..."
-                className={`
-                  absolute right-0 h-10 bg-secondary-foreground/10 border border-transparent
-                  rounded-full px-4 pr-10 text-sm text-primary-foreground placeholder:text-primary-foreground/50
-                  focus:outline-none focus:border-primary focus:shadow-[0_0_20px_hsla(16,76%,49%,0.3)]
-                  transition-all duration-300
-                  ${isSearchOpen ? 'w-[280px] opacity-100' : 'w-0 opacity-0 pointer-events-none'}
-                `}
-              />
-              <button
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="relative z-10 w-10 h-10 flex items-center justify-center text-primary-foreground/80 hover:text-primary transition-colors duration-200"
-              >
-                <Search className="w-5 h-5" />
-              </button>
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </motion.div>
-
-            {/* Cart */}
-            <CartDrawer />
-
-            {/* Mobile Menu Toggle */}
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden w-10 h-10 flex items-center justify-center text-primary-foreground"
-            >
-              <motion.div
-                animate={{ rotate: isMobileMenuOpen ? 180 : 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </motion.div>
-            </button>
-          </div>
+          </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
@@ -119,7 +97,7 @@ export function Header() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="md:hidden bg-secondary border-t border-primary-foreground/10"
+            className="md:hidden bg-black/95 backdrop-blur-md border-t border-white/5"
           >
             <nav className="container mx-auto px-4 py-6 flex flex-col gap-4">
               {navLinks.map((link, index) => (
@@ -127,12 +105,12 @@ export function Header() {
                   key={link.name}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ delay: index * 0.07 }}
                 >
                   <Link
                     to={link.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="block py-2 text-lg font-medium text-primary-foreground/90 hover:text-primary transition-colors"
+                    className="block py-2 text-sm tracking-[0.18em] uppercase text-white/80 hover:text-[#F26522] transition-colors"
                   >
                     {link.name}
                   </Link>
@@ -141,18 +119,33 @@ export function Header() {
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className="pt-4"
+                transition={{ delay: 0.3 }}
               >
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-primary-foreground/50" />
-                  <input
-                    type="text"
-                    placeholder="Search products..."
-                    className="w-full h-12 bg-primary-foreground/10 rounded-lg pl-10 pr-4 text-primary-foreground placeholder:text-primary-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                </div>
+                <Link
+                  to="/enquiry"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-2 py-2 text-sm tracking-[0.18em] uppercase text-white/80 hover:text-[#F26522] transition-colors"
+                >
+                  <ClipboardList className="w-4 h-4" />
+                  Enquiry List
+                  {enquiryCount > 0 && (
+                    <span className="px-2 py-0.5 bg-[#F26522] text-black text-[10px] font-bold rounded-full">
+                      {enquiryCount}
+                    </span>
+                  )}
+                </Link>
               </motion.div>
+              <motion.a
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.35 }}
+                href="https://wa.me/15512297949"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block text-center text-xs tracking-[0.16em] uppercase font-semibold px-6 py-3 bg-gradient-to-r from-[#D94F16] to-[#FF7A2F] text-black rounded-md"
+              >
+                WhatsApp Us
+              </motion.a>
             </nav>
           </motion.div>
         )}
