@@ -1,0 +1,86 @@
+UNIQLIURZ - SETUP GUIDE FOR AUNT (USA)
+========================================
+
+Your nephew Yashovardhan will guide you on Google Meet.
+This document has all the steps ready if opencode is closed.
+
+=== WHAT FILES YOU NEED ===
+
+1. Shopify images file (on Yash's desktop): C:\Users\yashb\Desktop\shopify-images.csv
+   - Only needed if some products show no images on the website
+   - Upload this file in Shopify admin to import missing images
+
+=== TASK 1: SHOPIFY PAYMENTS (MOST IMPORTANT) ===
+Purpose: So customers can actually buy products (Buy Now button)
+
+1. Open Google Chrome
+2. Go to: https://admin.shopify.com/store/uniqliurz
+3. Click Settings (bottom left)
+4. Click "Payments"
+5. Click "Add payment provider" or "Complete setup"
+6. Choose "Shopify Payments"
+7. Fill in:
+   - Business type: Sole proprietorship or Individual
+   - Legal business name: Uniqliurz (or your name)
+   - Address: Your New Jersey address
+   - EIN or SSN: Your SSN (it's safe, Shopify is trusted)
+   - Product type: Handmade goods / Crafts
+8. Click "Complete setup"
+9. Done! Now "Buy Now" on www.uniqliurz.com will work
+
+=== TASK 2: FIX ROOT DOMAIN (uniqliurz.com without www) ===
+Purpose: So uniqliurz.com (no www) also shows the website
+
+1. Go to: https://console.cloud.google.com
+2. Search for "Cloud DNS" in the top search bar
+3. Click on "uniqliurz.com" zone
+4. Look for an A record with blank name (called "@")
+5. If it shows 23.227.38.65 (Shopify's IP), change it to 76.76.21.21 (Vercel's IP)
+6. If no A record exists, click "Add Record Set" and fill:
+   - DNS Name: leave blank
+   - Type: A
+   - TTL: 300
+   - IPv4 Address: 76.76.21.21
+7. Click Create or Save
+8. Wait 10-30 minutes, then visit uniqliurz.com to check
+
+=== TASK 3: GOOGLE BUSINESS PROFILE ===
+Purpose: Show up when people search "custom gifts New Jersey" on Google
+
+Already started by Yash. You may need to complete video verification.
+
+1. Go to: https://business.google.com
+2. Sign in with the Uniqliurz Google account
+3. Complete any pending verification steps
+4. Add photos of products
+5. Write a description (already provided)
+
+=== TASK 4: RE-IMPORT PRODUCT IMAGES (IF NEEDED) ===
+Purpose: Fix products showing no images
+
+1. Go to: https://admin.shopify.com/store/uniqliurz/products
+2. Click "Import" button (top right)
+3. Upload the file: shopify-images.csv
+4. Click "Import"
+5. Done
+
+=== TASK 5: IMAGE OPTIMIZATION (IF SITE IS SLOW) ===
+Purpose: Make website load faster
+
+1. Go to: https://tinypng.com
+2. Drag all product images onto the page
+3. Click "Download All"
+4. Send the zip file back to Yash to replace on the website
+
+=== QUICK LINKS ===
+
+Shopify Admin:   https://admin.shopify.com/store/uniqliurz
+Website:         https://www.uniqliurz.com
+Google Cloud:    https://console.cloud.google.com
+Business Prof.:  https://business.google.com
+Search Console:  https://search.google.com/search-console
+
+=== CONTACT ===
+
+WhatsApp: +1-551-229-7949
+Email: Use the Uniqliurz Google account email
