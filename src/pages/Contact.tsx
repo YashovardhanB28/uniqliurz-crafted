@@ -18,13 +18,39 @@ const Contact = () => {
     message: ""
   });
 
+  const WHATSAPP_NUMBER = "15512297949";
+
+  const generateMessage = () => {
+    const lines = [
+      `📬 *NEW CONTACT FORM MESSAGE*`,
+      ``,
+      `*Name:* ${formData.name}`,
+      `*Email:* ${formData.email}`,
+      `*Subject:* ${formData.subject}`,
+      ``,
+      `*Message:*`,
+      formData.message,
+    ];
+    return encodeURIComponent(lines.join('\n'));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
     setIsSubmitting(true);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    toast.success("Message sent!", {
-      description: "We will get back to you as soon as possible."
+
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${generateMessage()}`;
+    window.open(whatsappUrl, '_blank');
+
+    toast.success("Message prepared!", {
+      description: "Complete sending on WhatsApp. We will get back to you within 24 hours."
     });
+
     setFormData({ name: "", email: "", subject: "", message: "" });
     setIsSubmitting(false);
   };

@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer';
 import { ProductMarquee } from '@/components/ProductMarquee';
 import { ScrollSequence } from '@/components/ScrollSequence';
 import { useSEO } from '@/hooks/useSEO';
+import { TestimonialsSection } from '@/components/TestimonialsSection';
 import allProducts from '@/data/products';
 
 const ENABLE_SCROLL_SEQUENCE = false;
@@ -541,6 +542,8 @@ const Index = () => {
           </motion.div>
         </div>
       </section>
+
+      <TestimonialsSection />
 
       <section className="py-24 border-t border-border">
         <div className="container mx-auto px-4">
