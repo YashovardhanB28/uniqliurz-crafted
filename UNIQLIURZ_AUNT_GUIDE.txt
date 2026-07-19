@@ -1,86 +1,159 @@
 UNIQLIURZ - SETUP GUIDE FOR AUNT (USA)
 ========================================
 
-Your nephew Yashovardhan will guide you on Google Meet.
-This document has all the steps ready if opencode is closed.
+Read this to your aunt line by line on Google Meet.
+Everything marked [PASTE THIS] is exact text she should copy.
 
-=== WHAT FILES YOU NEED ===
+=== LOGIN CREDENTIALS NEEDED ===
 
-1. Shopify images file (on Yash's desktop): C:\Users\yashb\Desktop\shopify-images.csv
-   - Only needed if some products show no images on the website
-   - Upload this file in Shopify admin to import missing images
-
-=== TASK 1: SHOPIFY PAYMENTS (MOST IMPORTANT) ===
-Purpose: So customers can actually buy products (Buy Now button)
-
-1. Open Google Chrome
-2. Go to: https://admin.shopify.com/store/uniqliurz
-3. Click Settings (bottom left)
-4. Click "Payments"
-5. Click "Add payment provider" or "Complete setup"
-6. Choose "Shopify Payments"
-7. Fill in:
-   - Business type: Sole proprietorship or Individual
-   - Legal business name: Uniqliurz (or your name)
-   - Address: Your New Jersey address
-   - EIN or SSN: Your SSN (it's safe, Shopify is trusted)
-   - Product type: Handmade goods / Crafts
-8. Click "Complete setup"
-9. Done! Now "Buy Now" on www.uniqliurz.com will work
-
-=== TASK 2: FIX ROOT DOMAIN (uniqliurz.com without www) ===
-Purpose: So uniqliurz.com (no www) also shows the website
-
-1. Go to: https://console.cloud.google.com
-2. Search for "Cloud DNS" in the top search bar
-3. Click on "uniqliurz.com" zone
-4. Look for an A record with blank name (called "@")
-5. If it shows 23.227.38.65 (Shopify's IP), change it to 76.76.21.21 (Vercel's IP)
-6. If no A record exists, click "Add Record Set" and fill:
-   - DNS Name: leave blank
-   - Type: A
-   - TTL: 300
-   - IPv4 Address: 76.76.21.21
-7. Click Create or Save
-8. Wait 10-30 minutes, then visit uniqliurz.com to check
-
-=== TASK 3: GOOGLE BUSINESS PROFILE ===
-Purpose: Show up when people search "custom gifts New Jersey" on Google
-
-Already started by Yash. You may need to complete video verification.
-
-1. Go to: https://business.google.com
-2. Sign in with the Uniqliurz Google account
-3. Complete any pending verification steps
-4. Add photos of products
-5. Write a description (already provided)
-
-=== TASK 4: RE-IMPORT PRODUCT IMAGES (IF NEEDED) ===
-Purpose: Fix products showing no images
-
-1. Go to: https://admin.shopify.com/store/uniqliurz/products
-2. Click "Import" button (top right)
-3. Upload the file: shopify-images.csv
-4. Click "Import"
-5. Done
-
-=== TASK 5: IMAGE OPTIMIZATION (IF SITE IS SLOW) ===
-Purpose: Make website load faster
-
-1. Go to: https://tinypng.com
-2. Drag all product images onto the page
-3. Click "Download All"
-4. Send the zip file back to Yash to replace on the website
+- Uniqliurz Google account (email + password)
+- Shopify admin access (Yash will share login or send invite)
+- Google Cloud DNS access (Yash will share)
 
 === QUICK LINKS ===
 
 Shopify Admin:   https://admin.shopify.com/store/uniqliurz
-Website:         https://www.uniqliurz.com
 Google Cloud:    https://console.cloud.google.com
 Business Prof.:  https://business.google.com
 Search Console:  https://search.google.com/search-console
 
+=== TASK 1: SHOPIFY PAYMENTS (MOST IMPORTANT) ===
+
+Purpose: So customers can actually buy products (Buy Now button on website)
+
+Step-by-step for aunt:
+
+1. Open Google Chrome
+2. Go to this link: https://admin.shopify.com/store/uniqliurz
+3. Log in (Yash will provide the login)
+4. Look at the bottom left corner, click "Settings" (gear icon)
+5. In the left menu, click "Payments"
+6. You'll see "Shopify Payments" - click "Complete setup" or "Activate Shopify Payments"
+7. A form opens. Fill in these fields:
+
+   - Business type: Select "Individual / Sole Proprietor"
+   - Legal business name: [PASTE THIS] Uniqliurz
+   - Business address: [Enter your New Jersey home address]
+   - Phone number: [Enter your phone number]
+   - Date of birth: [Enter your DOB]
+   - SSN or EIN: [Enter your SSN - it's safe, Shopify is a trusted company]
+
+8. For "What do you sell?" select: [PASTE THIS] Handmade goods, Crafts, Custom gifts
+9. For "Business website" the field should already show uniqliurz.com
+10. Click "Complete setup" or "Submit"
+11. Done! Now the Buy Now button on the website will work
+
+=== TASK 2: GOOGLE BUSINESS PROFILE ===
+
+Purpose: Show up when New Jersey people search "custom gifts" on Google Maps/Search
+
+Step-by-step for aunt:
+
+--- STEP 2A: CREATE THE PROFILE ---
+
+1. Open a new tab
+2. Go to: https://business.google.com
+3. Sign in with the Uniqliurz Google account
+4. Click "Add your business" or "Create profile"
+5. Business name field - [PASTE THIS]: Uniqliurz
+6. Business category - Type this in the search box: [PASTE THIS] Gift shop
+   Then click on "Gift shop" from the dropdown
+7. For location - [PASTE THIS your New Jersey address, e.g.]:
+   [Your Street Address]
+   [City], New Jersey [ZIP]
+8. For "Do you want to add a location?" - Select "Yes"
+9. For "Do you serve customers outside this location?" - Select "No" (since we serve everywhere)
+10. For phone - [PASTE THIS]: +1 551-229-7949
+11. For website - [PASTE THIS]: https://www.uniqliurz.com
+12. Click "Next" or "Continue"
+
+--- STEP 2B: ADD BUSINESS DESCRIPTION ---
+
+Find the "Description" or "About" section and paste:
+
+[PASTE THIS]:
+Uniqliurz crafts handcrafted custom gifts and keepsakes in New Jersey. We specialize in personalized resin art, engraved gifts, custom apparel, photo frames, and unique gift baskets for every occasion. Each piece is made to order with love and attention to detail. Whether it is a birthday, wedding, anniversary, or just because, we help you create something truly one-of-a-kind. Based in New Jersey, serving customers across the USA.
+
+--- STEP 2C: ADD BUSINESS HOURS ---
+
+Set hours to (or whatever fits):
+Mon: 9:00 AM - 6:00 PM
+Tue: 9:00 AM - 6:00 PM
+Wed: 9:00 AM - 6:00 PM
+Thu: 9:00 AM - 6:00 PM
+Fri: 9:00 AM - 6:00 PM
+Sat: 10:00 AM - 4:00 PM
+Sun: Closed
+
+--- STEP 2D: ADD PHOTOS ---
+
+Take 3-5 photos of the nicest products and upload them:
+1. Click "Photos" in the left menu
+2. Click "Add photo"
+3. Select product photos from your computer
+4. Click "Upload"
+
+--- STEP 2E: VERIFICATION ---
+
+Google will ask to verify. If they ask for a video call verification:
+1. Click "Video verification" 
+2. Choose a convenient time slot
+3. At the scheduled time, answer the video call
+4. Show them a product, show your hands making something, and confirm your business name and address
+5. Done
+
+=== TASK 3: FIX ROOT DOMAIN ===
+
+Purpose: So typing "uniqliurz.com" (without www) also shows the website
+
+Step-by-step for aunt:
+
+1. Go to: https://console.cloud.google.com
+2. At the top, in the search bar, type: [PASTE THIS] Cloud DNS
+3. Click on "Cloud DNS" in the results
+4. You'll see a list - click on "uniqliurz.com" (it might show as a zone name)
+5. You'll see a table of DNS records. Look for a row where:
+   - Type column says "A"
+   - DNS Name column is blank or shows "@"
+6. If you see that row with "23.227.38.65" in the Data column:
+   - Click the pencil/edit icon on the right
+   - Change "23.227.38.65" to "76.76.21.21"
+   - Click "Save"
+7. If you DON'T see that row:
+   - Click "Add Record Set" at the top
+   - Fill in:
+     - DNS Name: leave it BLANK
+     - Type: select "A"
+     - TTL: type "300"
+     - IPv4 Address: type "76.76.21.21"
+   - Click "Create"
+8. Wait 10-30 minutes, then open a new tab and visit: https://uniqliurz.com
+9. If it shows the website, it worked!
+
+=== TASK 4: RE-IMPORT PRODUCT IMAGES (ONLY IF NEEDED) ===
+
+Purpose: Fix products that show no image on the website
+
+1. Ask Yash to send you the file "shopify-images.csv"
+2. Go to: https://admin.shopify.com/store/uniqliurz
+3. On the left menu, click "Products"
+4. At the top right, click "Import"
+5. Click "Add file" and select the shopify-images.csv file
+6. Click "Import"
+7. Wait 1-2 minutes, then refresh the Products page
+8. Check if products like "Custom Resin Clock" now show images
+
+=== TASK 5: IMAGE OPTIMIZATION (IF WEBSITE IS SLOW) ===
+
+Purpose: Make the website load faster
+
+1. Go to: https://tinypng.com
+2. Click the big area in the middle
+3. Select all the product images from Yash's computer
+4. Wait for upload and compression
+5. Click "Download All"
+6. Send the downloaded zip file back to Yash
+
 === CONTACT ===
 
 WhatsApp: +1-551-229-7949
-Email: Use the Uniqliurz Google account email

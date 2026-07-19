@@ -1,73 +1,61 @@
-# Welcome to your Lovable project
+# Uniqliurz - Custom Gifts & Keepsakes
 
-## Project info
+Premium headless Shopify e-commerce store for handcrafted custom gifts and keepsakes. Built with React, TypeScript, and Tailwind CSS, powered by Shopify Storefront API.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Tech Stack
 
-## How can I edit this code?
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS, shadcn/ui, Framer Motion
+- **Backend**: Shopify Storefront API (headless)
+- **Hosting**: Vercel (www.uniqliurz.com)
+- **Domain**: Google Cloud DNS
 
-There are several ways of editing your application.
+## Features
 
-**Use Lovable**
+- 56 handcrafted products across 10+ categories
+- Headless Shopify integration with local product fallback
+- Multi-product enquiry system via WhatsApp
+- Buy Now with Shopify checkout
+- Product personalization (custom text, color, notes)
+- Full SEO: structured data (JSON-LD), dynamic meta tags, sitemap
+- Responsive design with dark theme (#121212)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+## Getting Started
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+npm install
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Build for production
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```sh
+npm run build
+```
 
-**Use GitHub Codespaces**
+Generates sitemap and builds to `dist/`.
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Environment
 
-## What technologies are used for this project?
+No `.env` file required — Shopify credentials are configured in `src/config/shopify.ts`.
 
-This project is built with:
+## Project Structure
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```
+src/
+├── components/     # UI components (Header, Footer, SchemaMarkup, etc.)
+├── config/         # Shopify API configuration
+├── data/           # Local product data (56 products)
+├── hooks/          # Custom hooks (useProducts, useSEO)
+├── lib/            # Shopify client, structured data schemas
+├── pages/          # Route pages (Index, Shop, ProductDetail, etc.)
+└── App.tsx         # Root with routing and global SchemaMarkup
+```
 
-## How can I deploy this project?
+## Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Auto-deploys from GitHub `main` branch to Vercel. Every build generates a fresh sitemap via `scripts/generate-sitemap.js`.
 
-## Can I connect a custom domain to my Lovable project?
+## License
 
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+Private - All rights reserved.
