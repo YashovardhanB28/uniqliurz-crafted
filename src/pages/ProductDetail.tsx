@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Minus, Plus, ArrowLeft, Sparkles, Palette, Type, MessageCircle, ShoppingCart } from "lucide-react";
 import { createShopifyCheckoutUrl } from "@/lib/shopify";
+import { toast } from "sonner";
 
 const ProductDetail = () => {
   const { handle } = useParams<{ handle: string }>();
@@ -30,9 +31,9 @@ const ProductDetail = () => {
     setCheckoutLoading(true);
     try {
       const url = await createShopifyCheckoutUrl(variantId, quantity);
-      window.open(url, '_blank');
+      window.location.href = url;
     } catch (err: any) {
-      alert('Could not create checkout: ' + err.message);
+      toast.error('Store checkout is being configured. Please enquire via WhatsApp instead.');
     } finally {
       setCheckoutLoading(false);
     }
@@ -162,85 +163,136 @@ const ProductDetail = () => {
               <div className="pt-4 border-t border-border">
                 <button
                   onClick={() => setShowCustomization(!showCustomization)}
-                  className="flex items-center gap-2 text-primary font-medium hover:underline cursor-pointer"
+                  className="w-full flex items-center justify-between py-3 px-4 rounded-xl bg-gradient-to-r from-primary/10 to-transparent border border-primary/20 hover:border-primary/40 transition-all cursor-pointer group"
                 >
-                  <Sparkles className="w-5 h-5" />
-                  {showCustomization ? "Hide" : "Add"} Personalization Options
+                  <span className="flex items-center gap-2 text-primary font-medium text-sm">
+                    <Sparkles className="w-4 h-4" />
+                    Make It Personal
+                  </span>
+                  <span className="text-xs text-muted-foreground group-hover:text-primary transition-colors">
+                    {showCustomization ? 'Close' : 'Customize'}
+                  </span>
                 </button>
               </div>
 
               {showCustomization && (
                 <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  className="space-y-4 p-4 bg-secondary/30 rounded-xl border border-border"
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="space-y-5 p-5 bg-gradient-to-b from-secondary/50 to-background rounded-xl border border-border/60"
                 >
-                  <h3 className="font-semibold text-foreground flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-primary" />
-                    Personalize Your Gift
-                  </h3>
+                  <div className="flex items-center gap-3 pb-3 border-b border-border/40">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <Sparkles className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-foreground text-sm">Personalize Your Gift</h3>
+                      <p className="text-xs text-muted-foreground">Make it truly one-of-a-kind</p>
+                    </div>
+                  </div>
                   
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-                      <Type className="w-4 h-4" />
-                      Custom Text / Name
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-2 text-xs font-medium text-foreground/80 uppercase tracking-wider">
+                      <Type className="w-3.5 h-3.5 text-primary" />
+                      Custom Text
                     </label>
-                    <Input
-                      placeholder="Enter text to be engraved or printed"
-                      value={customText}
-                      onChange={(e) => setCustomText(e.target.value)}
-                      maxLength={50}
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {customText.length}/50 characters
-                    </p>
+                    <div className="relative">
+                      <Input
+                        placeholder="Enter name, date or message"
+                        value={customText}
+                        onChange={(e) => setCustomText(e.target.value)}
+                        maxLength={50}
+                        className="bg-background/50 border-border/60 focus:border-primary pl-3"
+                      />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <span className={`text-[10px] font-medium ${customText.length > 40 ? 'text-amber-400' : 'text-muted-foreground'}`}>
+                          {customText.length}/50
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
-                    <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-2">
-                      <Palette className="w-4 h-4" />
-                      Preferred Color
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-2 text-xs font-medium text-foreground/80 uppercase tracking-wider">
+                      <Palette className="w-3.5 h-3.5 text-primary" />
+                      Color Preference
                     </label>
                     <div className="flex items-center gap-3">
-                      <input
-                        type="color"
-                        value={customColor}
-                        onChange={(e) => setCustomColor(e.target.value)}
-                        className="w-12 h-12 rounded-lg cursor-pointer border border-border"
-                      />
+                      <div className="relative">
+                        <input
+                          type="color"
+                          value={customColor}
+                          onChange={(e) => setCustomColor(e.target.value)}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                        <div
+                          className="w-10 h-10 rounded-xl border-2 border-border/60 shadow-sm cursor-pointer"
+                          style={{ backgroundColor: customColor }}
+                        />
+                      </div>
                       <div className="flex flex-wrap gap-2">
-                        {["#F26522", "#3B82F6", "#10B981", "#8B5CF6", "#EC4899", "#F59E0B"].map((color) => (
+                        {[
+                          { color: "#F26522", label: "Brand" },
+                          { color: "#3B82F6", label: "Blue" },
+                          { color: "#10B981", label: "Green" },
+                          { color: "#8B5CF6", label: "Purple" },
+                          { color: "#EC4899", label: "Pink" },
+                          { color: "#F59E0B", label: "Gold" },
+                          { color: "#EF4444", label: "Red" },
+                          { color: "#FFFFFF", label: "White" },
+                        ].map(({ color, label }) => (
                           <button
                             key={color}
                             onClick={() => setCustomColor(color)}
-                            className={`w-8 h-8 rounded-full border-2 transition-all cursor-pointer ${
-                              customColor === color ? "border-foreground scale-110" : "border-transparent"
-                            }`}
-                            style={{ backgroundColor: color }}
-                          />
+                            className="group/tip relative"
+                            title={label}
+                          >
+                            <div
+                              className={`w-8 h-8 rounded-full border-2 transition-all cursor-pointer ${
+                                customColor === color
+                                  ? "border-foreground scale-110 shadow-md"
+                                  : "border-border/40 hover:border-foreground/40"
+                              }`}
+                              style={{ backgroundColor: color }}
+                            />
+                            <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[9px] text-muted-foreground opacity-0 group-hover/tip:opacity-100 transition-opacity whitespace-nowrap">
+                              {label}
+                            </span>
+                          </button>
                         ))}
                       </div>
                     </div>
                   </div>
 
-                  <div>
-                    <label className="text-sm font-medium text-foreground mb-2 block">
-                      Special Instructions (Optional)
+                  <div className="space-y-3">
+                    <label className="flex items-center gap-2 text-xs font-medium text-foreground/80 uppercase tracking-wider">
+                      Special Notes
                     </label>
                     <Textarea
-                      placeholder="Any specific requests, font preferences, or design notes..."
+                      placeholder="Font preference, design ideas, occasion details..."
                       value={customNotes}
                       onChange={(e) => setCustomNotes(e.target.value)}
-                      rows={3}
+                      rows={2}
+                      className="bg-background/50 border-border/60 focus:border-primary resize-none text-sm"
                     />
                   </div>
 
                   {customText && (
-                    <div className="p-4 rounded-lg bg-background border border-primary/30">
-                      <p className="text-xs text-muted-foreground mb-2">Preview:</p>
-                      <p className="text-xl font-bold" style={{ color: customColor }}>
-                        "{customText}"
+                    <div className="p-4 rounded-xl bg-gradient-to-br from-background via-background to-primary/5 border border-primary/20">
+                      <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-2 font-medium">
+                        Live Preview
+                      </p>
+                      <div className="flex items-center justify-center py-3 px-4 rounded-lg bg-secondary/30 border border-border/40">
+                        <p
+                          className="text-lg md:text-xl font-bold tracking-wide text-center"
+                          style={{ color: customColor }}
+                        >
+                          {customText}
+                        </p>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground/60 text-center mt-2">
+                        Final appearance may vary based on material and technique
                       </p>
                     </div>
                   )}
